@@ -1,0 +1,226 @@
+{
+  "generatedAt": "2026-10-09T00:00:00.000Z",
+  "configVersion": "2026.10-estimate.1",
+  "note": "Simulated launches with planted ground truth. Not real-token results.",
+  "summary": {
+    "tokens": 5,
+    "verdictAccuracy": "5/5",
+    "plantedClustersFound": "7/7",
+    "clusterWalletRecall": 1,
+    "plantedWashWalletsFound": "12/12",
+    "falsePositiveClustersOnCleanTokens": 0,
+    "falsePositiveWashWalletsOnCleanTokens": 0,
+    "falsePositiveWashWalletsAllTokens": 0,
+    "effectiveHolderMaxAbsError": 0,
+    "findingsWithheldByVerifier": 3,
+    "findingsTotal": 40
+  },
+  "rows": [
+    {
+      "token": "0xfb85a95207582d1c1c45c04b29fc5f702f9c2199",
+      "symbol": "LUMEN",
+      "scenario": "clean",
+      "expectedVerdict": "GO",
+      "verdict": "GO",
+      "verdictCorrect": true,
+      "score": 100,
+      "rawHolders": {
+        "planted": 424,
+        "found": 424
+      },
+      "effectiveHolders": {
+        "planted": 422,
+        "found": 422,
+        "absError": 0
+      },
+      "clusters": {
+        "planted": 1,
+        "detected": 1,
+        "matched": 1,
+        "falsePositive": 0,
+        "walletRecall": 1
+      },
+      "washWallets": {
+        "planted": 0,
+        "detected": 0,
+        "truePositive": 0,
+        "falsePositive": 0
+      },
+      "bundles": {
+        "planted": 0,
+        "plantedWallets": 0,
+        "detectedWallets": 0,
+        "walletRecall": 1
+      },
+      "findingsPublished": 8,
+      "findingsWithheld": 0,
+      "withheldSignals": []
+    },
+    {
+      "token": "0x4339abdb0b169c83e3ff3287741a7a80c41d0167",
+      "symbol": "RISE",
+      "scenario": "early-stage",
+      "expectedVerdict": "WAIT",
+      "verdict": "WAIT",
+      "verdictCorrect": true,
+      "score": 74,
+      "rawHolders": {
+        "planted": 106,
+        "found": 106
+      },
+      "effectiveHolders": {
+        "planted": 106,
+        "found": 106,
+        "absError": 0
+      },
+      "clusters": {
+        "planted": 0,
+        "detected": 0,
+        "matched": 0,
+        "falsePositive": 0,
+        "walletRecall": 1
+      },
+      "washWallets": {
+        "planted": 0,
+        "detected": 0,
+        "truePositive": 0,
+        "falsePositive": 0
+      },
+      "bundles": {
+        "planted": 0,
+        "plantedWallets": 0,
+        "detectedWallets": 0,
+        "walletRecall": 1
+      },
+      "findingsPublished": 8,
+      "findingsWithheld": 0,
+      "withheldSignals": []
+    },
+    {
+      "token": "0xdc7d9045bc4d73a6f19f8a5064d91f814eb760b4",
+      "symbol": "HOLD",
+      "scenario": "concentrated",
+      "expectedVerdict": "NO-GO",
+      "verdict": "NO-GO",
+      "verdictCorrect": true,
+      "score": 67,
+      "rawHolders": {
+        "planted": 89,
+        "found": 89
+      },
+      "effectiveHolders": {
+        "planted": 89,
+        "found": 89,
+        "absError": 0
+      },
+      "clusters": {
+        "planted": 0,
+        "detected": 0,
+        "matched": 0,
+        "falsePositive": 0,
+        "walletRecall": 1
+      },
+      "washWallets": {
+        "planted": 0,
+        "detected": 0,
+        "truePositive": 0,
+        "falsePositive": 0
+      },
+      "bundles": {
+        "planted": 0,
+        "plantedWallets": 0,
+        "detectedWallets": 0,
+        "walletRecall": 1
+      },
+      "findingsPublished": 7,
+      "findingsWithheld": 1,
+      "withheldSignals": [
+        "volume_per_wallet"
+      ]
+    },
+    {
+      "token": "0x6c91c40fa956737071f4b6d6806ac240402f0e6d",
+      "symbol": "WAVE",
+      "scenario": "wash-traded",
+      "expectedVerdict": "NO-GO",
+      "verdict": "NO-GO",
+      "verdictCorrect": true,
+      "score": 74,
+      "rawHolders": {
+        "planted": 171,
+        "found": 171
+      },
+      "effectiveHolders": {
+        "planted": 171,
+        "found": 171,
+        "absError": 0
+      },
+      "clusters": {
+        "planted": 2,
+        "detected": 2,
+        "matched": 2,
+        "falsePositive": 0,
+        "walletRecall": 1
+      },
+      "washWallets": {
+        "planted": 12,
+        "detected": 12,
+        "truePositive": 12,
+        "falsePositive": 0
+      },
+      "bundles": {
+        "planted": 0,
+        "plantedWallets": 0,
+        "detectedWallets": 0,
+        "walletRecall": 1
+      },
+      "findingsPublished": 7,
+      "findingsWithheld": 1,
+      "withheldSignals": [
+        "wallet_age"
+      ]
+    },
+    {
+      "token": "0x080b715aeae2c450c35c3598256a0413243e9a1e",
+      "symbol": "MIRA",
+      "scenario": "sybil-clustered",
+      "expectedVerdict": "NO-GO",
+      "verdict": "NO-GO",
+      "verdictCorrect": true,
+      "score": 44,
+      "rawHolders": {
+        "planted": 412,
+        "found": 412
+      },
+      "effectiveHolders": {
+        "planted": 38,
+        "found": 38,
+        "absError": 0
+      },
+      "clusters": {
+        "planted": 4,
+        "detected": 4,
+        "matched": 4,
+        "falsePositive": 0,
+        "walletRecall": 1
+      },
+      "washWallets": {
+        "planted": 0,
+        "detected": 0,
+        "truePositive": 0,
+        "falsePositive": 0
+      },
+      "bundles": {
+        "planted": 28,
+        "plantedWallets": 378,
+        "detectedWallets": 378,
+        "walletRecall": 1
+      },
+      "findingsPublished": 7,
+      "findingsWithheld": 1,
+      "withheldSignals": [
+        "wallet_age"
+      ]
+    }
+  ]
+}

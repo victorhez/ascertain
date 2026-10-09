@@ -1,0 +1,36 @@
+{
+  "name": "ascertain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The integrity and readiness layer for Ascend launches on Elysium.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "backtest": "tsx scripts/backtest.ts",
+    "replay": "tsx scripts/replay.ts",
+    "x402:demo": "tsx scripts/x402-client.ts"
+  },
+  "dependencies": {
+    "geist": "^1.7.2",
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "viem": "^2.57.4",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

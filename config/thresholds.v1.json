@@ -1,0 +1,56 @@
+{
+  "version": "2026.10-estimate.1",
+  "status": "estimate",
+  "basis": "Estimated from the criteria Ascend has published (market capitalization, unique holders, volume, checks for concentrated or coordinated accumulation). Ascend's real thresholds are internal. These numbers are NOT official Ascend decisions.",
+  "sources": [
+    { "label": "Ascend docs", "url": "https://ascendlaunch.gitbook.io/docs" },
+    { "label": "Kinetiq Elysium docs", "url": "https://elysium.kinetiq.xyz/docs" }
+  ],
+  "rules": {
+    "market_cap_usd":        { "label": "Market capitalization", "kind": "growth",    "min": 250000, "weight": 0.15, "unit": "usd" },
+    "effective_holders":     { "label": "Effective holders",     "kind": "growth",    "min": 150,    "weight": 0.20, "unit": "count" },
+    "organic_volume_usd":    { "label": "Organic daily volume (time-weighted)", "kind": "growth", "min": 40000, "weight": 0.15, "unit": "usd" },
+    "effective_ratio":       { "label": "Effective / raw holders", "kind": "integrity", "min": 0.75, "hardMin": 0.5, "weight": 0.15, "unit": "ratio" },
+    "top10_share":           { "label": "Top-10 holder share",   "kind": "integrity", "max": 0.45, "hardMax": 0.80, "weight": 0.10, "unit": "pct" },
+    "top1_share":            { "label": "Top-1 holder share",    "kind": "integrity", "max": 0.10, "hardMax": 0.25, "weight": 0.05, "unit": "pct" },
+    "inflated_volume_share": { "label": "Inflated volume share", "kind": "integrity", "max": 0.15, "hardMax": 0.35, "weight": 0.15, "unit": "pct" },
+    "fresh_wallet_share":    { "label": "Fresh-wallet share",    "kind": "integrity", "max": 0.35, "hardMax": 0.70, "weight": 0.05, "unit": "pct", "hard": false }
+  },
+  "intents": {
+    "creator": ["market_cap_usd", "effective_holders", "organic_volume_usd", "effective_ratio", "top10_share", "top1_share", "inflated_volume_share", "fresh_wallet_share"],
+    "trader":  ["organic_volume_usd", "effective_ratio", "top10_share", "top1_share", "inflated_volume_share", "fresh_wallet_share"],
+    "staker":  ["market_cap_usd", "effective_holders", "effective_ratio", "top10_share", "top1_share"]
+  },
+  "signals": {
+    "ignoredFunders": [
+      "0x00000000000000000000000000000000000c0001",
+      "0x00000000000000000000000000000000000c0002",
+      "0x00000000000000000000000000000000000c0003",
+      "0x00000000000000000000000000000000000c0004",
+      "0x00000000000000000000000000000000000b0001"
+    ],
+    "fundingMaxHops": 2,
+    "minClusterSize": 3,
+    "bundleMinWallets": 5,
+    "bundleMaxSpread": 0.05,
+    "washMinGrossUsd": 5000,
+    "washMaxNetRatio": 0.1,
+    "washMinPairs": 4,
+    "washPairWindowSec": 3600,
+    "washPairTolerance": 0.05,
+    "washCycleMinRatio": 0.9,
+    "coordinatedMinSize": 10,
+    "freshMaxNonce": 3,
+    "freshWindowBlocks": 2592000,
+    "volumeWindowDays": 7,
+    "volumeSpikeCap": 3,
+    "evidenceCap": { "perFinding": 24 }
+  },
+  "stalenessLimitMs": 21600000,
+  "listing": {
+    "deployerFeeShare": 0.25,
+    "approvedFeeShare": 0.5,
+    "tokenTradingFee": 0.01,
+    "referralShare": 0.2
+  }
+}
