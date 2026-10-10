@@ -76,8 +76,12 @@ export async function verifyFindings(
         reproduce: reproduceCommand(e, rpc),
       }));
       const bad = receipts.filter((r) => !r.verified);
+      const errored = bad.filter((r) => r.verifierRaw.startsWith("<error"));
+      if (bad.length && errored.length === bad.length) {
+        return { ...f, status: "withheld", receipts, verifiedAt, verifierRpc: source.id, withheldReason: `Verifier unavailable: ${errored.length} of ${receipts.length} re-fetches errored (${trunc(errored[0].verifierRaw.replace(/\s+/g, " "), 90)}). This is not a data mismatch; the claim stays withheld until the verifier can re-fetch.` };
+      }
       if (bad.length) {
-        const first = bad[0];
+        const first = bad.find((r) => !r.verifierRaw.startsWith("<error")) ?? bad[0];
         const what = first.kind === "call" ? `call ${first.callData?.slice(0, 10)}…@${first.blockNumber}` : first.kind === "nonce" ? `nonce(${first.address.slice(0, 10)}…)@${first.blockNumber}` : `${first.kind} ${first.txHash?.slice(0, 12)}…`;
         return {
           ...f,

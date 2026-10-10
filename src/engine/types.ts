@@ -15,6 +15,8 @@ export interface TokenMeta {
   deployer: Address;
   quoteAsset: { symbol: string; address: Address; decimals: number };
   source: "fixture" | "rpc";
+  /** True when the launch exists on a real chain (testnet), not only in the simulator. */
+  onchain?: boolean;
   summary: string;
   /** Present for fixtures only: what the generator planted. */
   scenario?: string;
@@ -53,6 +55,10 @@ export interface Dataset {
   fundingTxs: RawTx[];
   /** eth_getTransactionCount at head, per wallet that appears as a holder or trader. */
   nonces: Record<string, number>;
+  /** Extra funding sources to ignore (e.g. the deployer acting as the faucet on testnet launches). */
+  ignoredFunders?: string[];
+  /** Threshold profile. "testnet-scale" shrinks growth bars to the size of mock launches. */
+  profile?: "testnet-scale";
 }
 
 export interface Transfer { from: Address; to: Address; amount: bigint; blockNumber: number; txHash: Hex; logIndex: number }

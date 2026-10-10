@@ -72,7 +72,7 @@ export interface Cluster {
 }
 
 export function fundingClusters(L: Ledger, cfg: EngineConfig): SignalOutput & { clusters: Cluster[] } {
-  const ignored = new Set(cfg.signals.ignoredFunders.map(lc));
+  const ignored = new Set([...cfg.signals.ignoredFunders, ...(L.ds.ignoredFunders ?? [])].map(lc));
   const maxHops = cfg.signals.fundingMaxHops;
   const dsu = new DSU();
   const ancestors = new Map<string, string[]>();

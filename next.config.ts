@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  outputFileTracingIncludes: { "/**": ["./data/**/*", "./config/**/*"] },
   // Public REST surface lives at /v1/* (see openapi.json); handlers are under /api/v1/*.
   async rewrites() {
     return [

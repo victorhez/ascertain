@@ -7,6 +7,7 @@ const links = [
   { href: "/methodology", label: "Methodology" },
   { href: "/agents", label: "Agents" },
   { href: "/withheld", label: "Withheld" },
+  { href: "/submission", label: "Judge guide" },
 ];
 
 export function Nav() {

@@ -53,7 +53,7 @@ export default async function Home() {
           <Proof n={backtest.summary.plantedClustersFound} l="planted clusters found" />
           <Proof n={String(backtest.summary.falsePositiveClustersOnCleanTokens + backtest.summary.falsePositiveWashWalletsOnCleanTokens)} l="false positives on clean tokens" />
           <Proof n={backtest.summary.plantedWashWalletsFound} l="planted wash wallets found" />
-          <Proof n={`${backtest.summary.findingsWithheldByVerifier}/${backtest.summary.findingsTotal}`} l="findings withheld by the verifier" />
+          <Proof n={`${backtest.summary.findingsWithheldByVerifier}/${backtest.summary.findingsTotal}`} l="withheld by the verifier (all three injected to demo it)" />
         </div>
         <p className="mt-3 text-center text-[12px] text-dim">Back-test on five simulated Elysium-testnet launches with planted ground truth. Reproduce with <code className="mono text-muted">npm run backtest</code>.</p>
       </section>
@@ -61,7 +61,7 @@ export default async function Home() {
       {/* ------------------------------------------------------------ launches */}
       <section className="mx-auto mt-28 max-w-[1180px] px-4 sm:px-6">
         <SectionHead eyebrow="Mock launches" title="Five launches. Five verdicts.">
-          Deterministic simulated launches with planted ground truth: clean, early, concentrated, wash-traded and clustered. Open any of them and re-fetch the evidence.
+          Mock launches with planted ground truth: clean, early, concentrated, wash-traded and clustered. Some are simulated; the three marked on-chain are deployed on Elysium testnet. Open any of them and re-fetch the evidence.
         </SectionHead>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tokens.map((t, i) => <TokenCard key={t.address} t={t} delay={i * 0.05} />)}

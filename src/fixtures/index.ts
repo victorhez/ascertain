@@ -3,6 +3,11 @@ import { RULE_VERSIONS } from "@/engine/config";
 import { buildLedger } from "@/engine/ledger";
 import { sample } from "@/engine/evidence";
 import type { Address, Dataset, Hex, RawLog } from "@/engine/types";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
+import path from "node:path";
+import type { ChainSource } from "@/chain/source";
+import { RpcSource } from "@/chain/live";
+import { CachedSource, type Fetches } from "@/chain/cached";
 import { FixtureChain } from "./chain";
 import { generate, type GroundTruth } from "./generate";
 import { SPECS } from "./scenarios";
@@ -15,6 +20,12 @@ export interface Fixture {
   truth: Dataset;
   info: GroundTruth;
   drift: { kind: string; description: string } | null;
+  /** Real contracts on Elysium testnet (planted by scripts/plant-testnet.ts). */
+  onchain?: boolean;
+  /** Verifier for this launch; defaults to the world replica. */
+  verifier?: ChainSource;
+  /** Live re-verification against the testnet RPC (slow, rate-limited). */
+  liveVerifier?: ChainSource;
 }
 
 export interface FixtureWorld {
@@ -64,6 +75,19 @@ export function getWorld(): FixtureWorld {
     Object.assign(nonceTruth, trueNonces);
     const { indexer, drift } = applyDrift(spec.key, truth);
     fixtures.push({ key: spec.key, truth, indexer, info: truthInfo, drift });
+  }
+  const dir = path.join(process.cwd(), "data", "testnet");
+  if (existsSync(dir)) {
+    const url = process.env.ELYSIUM_VERIFIER_RPC_URL || process.env.ELYSIUM_RPC_URL || "https://testnet-rpc.elysium.kinetiq.xyz";
+    const independent = !!process.env.ELYSIUM_VERIFIER_RPC_URL;
+    const label = `Elysium testnet RPC${independent ? " (independent provider)" : " (same provider as indexer; independent RPC not configured)"}`;
+    const liveVerifier = new RpcSource(99801, url, label, true);
+    for (const f of readdirSync(dir).filter((x) => x.endsWith(".json") && !x.includes(".fetches.")).sort()) {
+      const j = JSON.parse(readFileSync(path.join(dir, f), "utf8"));
+      const fp = path.join(dir, `${j.dataset.token.symbol}.fetches.json`);
+      const verifier = existsSync(fp) ? new CachedSource(JSON.parse(readFileSync(fp, "utf8")) as Fetches, label) : liveVerifier;
+      fixtures.push({ key: j.dataset.token.symbol.toLowerCase(), truth: j.dataset, indexer: j.dataset, info: j.info, drift: null, onchain: true, verifier, liveVerifier });
+    }
   }
   world = { fixtures, chainB: new FixtureChain(fixtures.map((f) => f.truth), nonceTruth) };
   return world;

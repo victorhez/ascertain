@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 export function Footer() {
   return (
     <footer className="mt-28 border-t border-line">
-      <div className="mx-auto grid max-w-[1180px] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-[1180px] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
         <div>
           <Logo />
           <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-muted">
@@ -14,6 +14,7 @@ export function Footer() {
             Verdicts are estimates from public Ascend criteria, not official Ascend decisions and not financial advice. Findings describe observable on-chain patterns only. Ascertain never holds funds or keys. Unaudited.
           </p>
         </div>
+        <FooterCol title="Project" items={[["GitHub", "https://github.com/victorhez/ascertain"], ["Judge guide and roadmap", "/submission"], ["Tokens", "/tokens"], ["Withheld list", "/withheld"]]} />
         <FooterCol title="Product" items={[["Tokens", "/tokens"], ["Withheld list", "/withheld"], ["Creator dashboard", "/creator/MIRA"], ["Revenue planner", "/creator/LUMEN#planner"]]} />
         <FooterCol title="Build" items={[["API and MCP", "/agents"], ["OpenAPI", "/openapi.json"], ["Agent card", "/.well-known/agent-card.json"], ["Embed a badge", "/token/LUMEN#badge"]]} />
         <FooterCol title="Trust" items={[["Methodology", "/methodology"], ["Known blind spots", "/methodology#blind-spots"], ["Thresholds (estimates)", "/methodology#thresholds"], ["Health", "/api/health"]]} />

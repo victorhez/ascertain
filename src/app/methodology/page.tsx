@@ -109,6 +109,7 @@ export default function Methodology() {
 
       <div className="prose-a">
         <h2 id="blind-spots" className="scroll-mt-24">Known blind spots</h2>
+        <p>Each case below has a test in <code>tests/blindspots.test.ts</code> that pins how it is handled.</p>
       </div>
       <ul className="space-y-3">
         {BLIND.map(([t, d]) => (

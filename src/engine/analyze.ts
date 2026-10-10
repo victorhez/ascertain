@@ -1,6 +1,6 @@
 import type { ChainSource } from "@/chain/source";
 import { digestOf } from "./canonical";
-import { RULE_VERSIONS, defaultConfig, type EngineConfig } from "./config";
+import { RULE_VERSIONS, configFor, defaultConfig, type EngineConfig } from "./config";
 import { buildLedger } from "./ledger";
 import { computeVerdict } from "./readiness";
 import * as S from "./signals";
@@ -76,7 +76,7 @@ export function computeFindings(ds: Dataset, cfg: EngineConfig = defaultConfig) 
 }
 
 export async function analyze(ds: Dataset, opts: AnalyzeOptions): Promise<Analysis> {
-  const cfg = opts.config ?? defaultConfig;
+  const cfg = opts.config ?? configFor(ds.profile);
   const now = opts.now ?? new Date();
   const { L, findings, clu, bun, wash } = computeFindings(ds, cfg);
   const verified = await verifyFindings(findings, opts.verifier, opts.rpcLabel ?? {}, now);

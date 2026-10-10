@@ -54,6 +54,18 @@ Mirage (MIRA)    412 raw holders  →  38 effective holders     NO-GO
 | **Agent-native and monetized** | MCP server, REST + OpenAPI, and x402 pay-per-answer from the first release. |
 | **Honest about limits** | Scores are labelled estimates. Methodology and known blind spots are public. |
 
+## Deployed on Elysium testnet
+
+Three mock launches are deployed on **Elysium testnet (chain 99801)** with real contracts, real funding trees and real swaps, then indexed from chain logs. All 717 logs and funding transactions were re-fetched from the testnet RPC and matched byte for byte (`npm run verify:all`).
+
+| Token | Pattern | Token contract | Pool | Indexed |
+| --- | --- | --- | --- | --- |
+| LUMT | clean | [`0xa37942e9…c05143`](https://elysium.kinetiq.xyz/address/0xa37942e9963d7e036f2b9e6d15c1597541c05143) | [`0x61601c6d…f1c366`](https://elysium.kinetiq.xyz/address/0x61601c6dfe0fede9f98c75ebd484a70683f1c366) | 140 logs, 68 funding txs |
+| WAVT | wash-traded | [`0xef137361…783bfb`](https://elysium.kinetiq.xyz/address/0xef1373618f42ff341f3a95acf279aaadd3783bfb) | [`0x67818b9c…da1d91`](https://elysium.kinetiq.xyz/address/0x67818b9cf6d6969b04b206de95b4c9bdedda1d91) | 278 logs, 47 funding txs |
+| MIRT | sybil-clustered | [`0x1b22e5b8…a3a580`](https://elysium.kinetiq.xyz/address/0x1b22e5b8d76b56884853bf5fe09ee697c9a3a580) | [`0x7bc751ca…145385`](https://elysium.kinetiq.xyz/address/0x7bc751ca934e5939e929a394fbe1efb8a5145385) | 118 logs, 66 funding txs |
+
+LUMT → **GO**, WAVT → **NO-GO** (wash loops), MIRT → **NO-GO** (56 raw holders → 9 effective). The pool is a mock of Ascend's closed hook pools (`contracts/`), not Ascend's contracts. Reproduce: `npm run plant` (needs a funded testnet key), `npm run verify:testnet`, `npm run verify:all`. Growth bars for these tiny launches use a clearly labelled `testnet-scale` threshold profile; integrity rules are not scaled.
+
 ## Results
 
 Back-test on five seeded Elysium-testnet launches with **planted ground truth** (`npm run backtest`, output in [`evidence/`](evidence)):
@@ -164,7 +176,7 @@ evidence/       back-test summary and per-finding evidence JSON
 
 - **Ascend's thresholds are internal.** Ours are estimates from public criteria, configurable and labelled. Nothing here is an official Ascend decision.
 - **Elysium mainnet is pre-launch** with no published date. Ascertain ships against the testnet chain model; mainnet is a roadmap milestone. HyperCore precompiles are not depended on.
-- **The hosted demo uses simulated launches.** Ascend hook-pool addresses and interface are not yet available to us; the adapter plugs in once published. The Foundry contracts in `contracts/` are written but not yet deployed from this snapshot.
+- **Five more launches on the site are simulated** and labelled as such; three launches are on-chain on Elysium testnet. Ascend hook-pool addresses and interface are not yet available to us; the adapter plugs in once published. On-chain receipts are recorded from the testnet RPC (same provider as the indexer; an independent second provider is not yet configured) and can be re-verified live with `?live=1`.
 - **Replay on real tokens** is implemented for the ERC-20 adapter (concentration + verification) but not yet run for published results.
 - **Receipts verify a sample** of cited facts plus a digest; derived metrics are recomputed deterministically from stored raw logs.
 - **No audit is claimed.** Findings describe observable on-chain patterns, never intent. Clusters are shown as "linked by funding source".

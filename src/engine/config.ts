@@ -55,3 +55,17 @@ export const RULE_VERSIONS = {
   effective_holders: "effective-holders@1.0.0",
   market_cap: "market-cap@1.0.0",
 } as const;
+
+/**
+ * Growth bars scaled down for mock launches on testnet, which are far smaller than a real launch.
+ * Integrity rules (concentration, clusters, wash, fresh wallets) are NOT scaled.
+ */
+export function configFor(profile?: "testnet-scale"): EngineConfig {
+  if (profile !== "testnet-scale") return defaultConfig;
+  const c = structuredClone(defaultConfig);
+  c.version = `${defaultConfig.version}+testnet-scale`;
+  c.rules.market_cap_usd.min = 25_000;
+  c.rules.effective_holders.min = 30;
+  c.rules.organic_volume_usd.min = 4_000;
+  return c;
+}

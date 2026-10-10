@@ -11,3 +11,5 @@ contracts/cache
 contracts/lib
 mcp/node_modules
 evidence/replay-*.json
+
+.vercel

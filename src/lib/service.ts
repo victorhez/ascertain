@@ -12,9 +12,9 @@ const cache = new Map<string, { at: number; value: Promise<Analysis | null> }>()
 export interface Resolved { analysis: Analysis; fixture?: Fixture }
 
 /** Look a token up by address or symbol and (re)verify it. `verifier:false` is the "delete the verifier" demo. */
-export async function getAnalysis(id: string, opts: { verifier?: boolean } = {}): Promise<Resolved | null> {
+export async function getAnalysis(id: string, opts: { verifier?: boolean; live?: boolean } = {}): Promise<Resolved | null> {
   const verifier = opts.verifier ?? true;
-  const key = `${id.toLowerCase()}|${verifier}`;
+  const key = `${id.toLowerCase()}|${verifier}|${!!opts.live}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) {
     const analysis = await hit.value;
@@ -23,7 +23,7 @@ export async function getAnalysis(id: string, opts: { verifier?: boolean } = {})
   const fx = findFixture(id);
   let value: Promise<Analysis | null>;
   if (fx) {
-    value = analyze(fx.indexer, { verifier: verifier ? getWorld().chainB : null, rpcLabel: RPC_LABEL });
+    value = analyze(fx.indexer, { verifier: verifier ? ((opts.live ? fx.liveVerifier : undefined) ?? fx.verifier ?? getWorld().chainB) : null, rpcLabel: RPC_LABEL });
   } else {
     value = Promise.resolve(null);
   }
@@ -59,7 +59,8 @@ export function summarize(a: Analysis, fixture?: Fixture) {
     verifiedAt: a.verifiedAt,
     withheld: a.withheld.length,
     published: a.published.length,
-    simulated: !!fixture,
+    simulated: !!fixture && !fixture.onchain,
+    onchain: !!fixture?.onchain,
   };
 }
 
@@ -95,8 +96,8 @@ export function readinessPayload(a: Analysis, intent: Intent, origin: string, fi
     verifiedAt: a.verifiedAt,
     verifier: a.verifierEnabled ? "independent-rpc" : "none",
     findings: a.findings.map((f) => ({ id: f.id, signal: f.signal, status: f.status, evidenceUrl: `${origin}/v1/evidence/${f.id}`, withheldReason: f.withheldReason })),
-    simulated: !!fixture,
-    dataSource: fixture ? "Simulated Elysium-testnet launch (deterministic fixture with planted ground truth)." : "Live chain read via JSON-RPC.",
+    simulated: !!fixture && !fixture.onchain,
+    dataSource: fixture?.onchain ? "Mock launch deployed on Elysium testnet (chain 99801); logs and receipts re-fetched via JSON-RPC." : fixture ? "Simulated Elysium-testnet launch (deterministic fixture with planted ground truth)." : "Live chain read via JSON-RPC.",
     thresholds: { status: defaultConfig.status, basis: defaultConfig.basis },
     disclaimer: DISCLAIMER,
   };

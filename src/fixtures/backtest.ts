@@ -31,7 +31,7 @@ export async function runBacktest(now = new Date("2026-10-09T00:00:00Z")) {
   const rows: BacktestRow[] = [];
   const evidence: Record<string, unknown>[] = [];
 
-  for (const f of world.fixtures) {
+  for (const f of world.fixtures.filter((x) => !x.onchain)) {
     const a = await analyze(f.indexer, { verifier: world.chainB, now, rpcLabel: { 99801: "https://testnet-rpc.elysium.kinetiq.xyz" } });
     const by = (s: string) => a.findings.find((x) => x.signal === s)!;
     const planted = f.info;

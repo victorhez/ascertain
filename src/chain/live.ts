@@ -30,31 +30,48 @@ export function clientFor(chainId: keyof typeof CHAINS, url?: string): PublicCli
   }) as PublicClient;
 }
 
+let inflight = 0;
+const waiters: (() => void)[] = [];
+/** Public RPCs rate-limit hard: cap concurrency and back off on 429s instead of reporting a false mismatch. */
+async function limited<T>(fn: () => Promise<T>): Promise<T> {
+  while (inflight >= 3) await new Promise<void>((r) => waiters.push(r));
+  inflight++;
+  try {
+    for (let i = 0; ; i++) {
+      try { return await fn(); } catch (e) {
+        if (i < 6 && /rate limit|429|timeout|fetch failed/i.test((e as Error).message)) { await new Promise((r) => setTimeout(r, 400 * (i + 1) ** 2)); continue; }
+        throw e;
+      }
+    }
+  } finally { inflight--; waiters.shift()?.(); }
+}
+
 /** ChainSource over standard EVM JSON-RPC (viem). Used by the replay CLI and by production verification. */
 export class RpcSource implements ChainSource {
   readonly id: string;
   private client: PublicClient;
-  constructor(chainId: keyof typeof CHAINS, url: string, label?: string) {
+  /** When true, state reads (eth_call, nonce) use the latest block. Valid for frozen mock launches whose state has not changed since the snapshot; public RPCs prune old state. */
+  constructor(chainId: keyof typeof CHAINS, url: string, label?: string, private stateAtLatest = false) {
     this.client = clientFor(chainId, url);
     this.id = label ?? url;
   }
   async getLog(_c: number, txHash: Hex, logIndex: number): Promise<RawLog | null> {
-    const r = await this.client.getTransactionReceipt({ hash: txHash });
+    const r = await limited(() => this.client.getTransactionReceipt({ hash: txHash }));
     const l = r.logs.find((x) => x.logIndex === logIndex);
     if (!l) return null;
     return { chainId: _c, blockNumber: Number(l.blockNumber), txHash, logIndex, address: lc(l.address), topics: [...l.topics] as Hex[], data: l.data };
   }
   async getTx(_c: number, hash: Hex): Promise<RawTx | null> {
-    const t = await this.client.getTransaction({ hash });
+    const t = await limited(() => this.client.getTransaction({ hash }));
     if (!t) return null;
     return { chainId: _c, hash, blockNumber: Number(t.blockNumber), from: lc(t.from), to: lc(t.to ?? "0x0000000000000000000000000000000000000000"), value: t.value.toString(), input: t.input };
   }
   async call(_c: number, to: Address, data: Hex, blockNumber: number): Promise<Hex> {
-    const r = await this.client.call({ to, data, blockNumber: BigInt(blockNumber) });
+    const r = await limited(() => this.client.call({ to, data, ...(this.stateAtLatest ? {} : { blockNumber: BigInt(blockNumber) }) }));
     return (r.data ?? "0x") as Hex;
   }
   async nonce(_c: number, address: Address, blockNumber: number): Promise<number> {
-    return this.client.getTransactionCount({ address, blockNumber: BigInt(blockNumber) });
+    return limited(() => this.client.getTransactionCount({ address, ...(this.stateAtLatest ? {} : { blockNumber: BigInt(blockNumber) }) }));
   }
 }
 

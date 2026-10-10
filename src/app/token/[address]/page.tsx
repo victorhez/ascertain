@@ -17,7 +17,7 @@ import type { Intent } from "@/engine/types";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-type Props = { params: Promise<{ address: string }>; searchParams: Promise<{ intent?: string; verifier?: string }> };
+type Props = { params: Promise<{ address: string }>; searchParams: Promise<{ intent?: string; verifier?: string; live?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { address } = await params;
@@ -38,7 +38,7 @@ export default async function TokenPage({ params, searchParams }: Props) {
   const intent: Intent = (["creator", "trader", "staker"] as const).find((x) => x === sp.intent) ?? "creator";
   const verifierOn = sp.verifier !== "off";
 
-  const resolved = await getAnalysis(id, { verifier: verifierOn });
+  const resolved = await getAnalysis(id, { verifier: verifierOn, live: sp.live === "1" });
   if (!resolved) return <NotIndexed id={id} />;
 
   const { analysis: a, fixture } = resolved;
@@ -67,9 +67,13 @@ export default async function TokenPage({ params, searchParams }: Props) {
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="chip">{a.token.chainName} · {a.token.chainId}</span>
-            {fixture && <span className="chip" style={{ color: "var(--wait)" }}>Simulated launch · {SCENARIO_LABEL[a.token.scenario ?? ""]}</span>}
+            {fixture && (fixture.onchain
+              ? <span className="chip" style={{ color: "var(--go)" }}>On-chain mock launch · Elysium testnet · {SCENARIO_LABEL[a.token.scenario ?? ""]}</span>
+              : <span className="chip" style={{ color: "var(--wait)" }}>Simulated launch · {SCENARIO_LABEL[a.token.scenario ?? ""]}</span>)}
+            {fixture?.onchain && <a className="chip chip-link" href={`https://elysium.kinetiq.xyz/address/${a.token.address}`} target="_blank" rel="noreferrer">Explorer ↗</a>}
             <span className="chip mono">{short(a.token.address, 8, 6)}<CopyButton text={a.token.address} label="" className="!h-5 !w-5 !border-0 !p-0" /></span>
-            <span className="chip"><span className="live-dot" />verified {ago(a.verifiedAt)}</span>
+            <span className="chip"><span className="live-dot" />{fixture?.onchain ? (sp.live === "1" ? `re-verified live ${ago(a.verifiedAt)}` : `receipts recorded from Elysium testnet RPC ${a.published[0]?.verifierRpc?.split("fetched ")[1] ?? ""}`) : `verified against replica B (simulated) ${ago(a.verifiedAt)}`}</span>
+            {fixture?.onchain && <Link className="chip chip-link" href={q({ live: sp.live === "1" ? "0" : "1" })} replace>{sp.live === "1" ? "Use recorded receipts" : "Re-verify live"}</Link>}
             <span className="chip">block {a.headBlock.toLocaleString("en-US")}</span>
           </div>
         </div>
@@ -199,7 +203,7 @@ export default async function TokenPage({ params, searchParams }: Props) {
       {/* ------------------------------------------------ ground truth */}
       {fixture && (
         <section className="mt-16">
-          <SectionHead eyebrow="Back-test" title="Planted versus found.">This launch is simulated, so the pattern the generator planted is known. Ascertain does not see it.</SectionHead>
+          <SectionHead eyebrow="Back-test" title="Planted versus found.">The pattern in this mock launch was planted by us, so the answer is known. Ascertain never sees it.</SectionHead>
           <div className="card grid gap-6 p-6 sm:grid-cols-2 lg:grid-cols-4">
             <GT label="Raw holders" planted={fixture.info.rawHolders} found={eff?.raw} />
             <GT label="Effective holders" planted={fixture.info.plantedEffectiveHolders} found={eff?.effective} />
