@@ -1,3 +1,7 @@
 {
-  "members": []
+  "members": [
+    { "name": "James", "role": "Researcher" },
+    { "name": "Victorhez", "role": "Developer" },
+    { "name": "Cthumbs", "role": "Brand designer" }
+  ]
 }
