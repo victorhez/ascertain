@@ -92,7 +92,7 @@ describe("evidence-first publishing", () => {
     const a = await run("lumen");
     for (const f of a.published) {
       expect(f.receipts!.length).toBeGreaterThan(0);
-      expect(f.receipts!.every((r) => r.verified && r.reproduce.startsWith("cast "))).toBe(true);
+      expect(f.receipts!.every((r) => r.verified && r.reproduce.startsWith("simulated"))).toBe(true);
     }
   });
 });
