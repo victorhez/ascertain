@@ -88,7 +88,7 @@ describe("evidence-first publishing", () => {
     expect(a.findings.map((f) => f.id)).toEqual(b.findings.map((f) => f.id));
   });
 
-  it("every published finding carries re-fetchable receipts", async () => {
+  it("every published finding carries verified receipts (simulated launches show no cast command)", async () => {
     const a = await run("lumen");
     for (const f of a.published) {
       expect(f.receipts!.length).toBeGreaterThan(0);
