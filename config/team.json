@@ -1,7 +1,8 @@
 {
   "members": [
-    { "name": "James", "role": "Researcher" },
-    { "name": "Victorhez", "role": "Developer" },
-    { "name": "Cthumbs", "role": "Brand designer" }
-  ]
+    { "name": "James", "role": "Researcher", "bio": "Defines Ascertain's integrity signals, thresholds and published blind spots, and checks findings against real on-chain behavior.", "link": "https://x.com/D_prophett_" },
+    { "name": "Victorhez", "role": "Developer", "bio": "Builds the indexer, evidence verifier, API and MCP server, and deployed the mock launches on Elysium testnet.", "link": "https://x.com/victorhez4" },
+    { "name": "Oloba", "role": "Artist and social media", "bio": "Designs the brand and interface visuals and runs the public posts that explain Ascertain's findings.", "link": "https://x.com/iamoloba_" }
+  ],
+  "why": "The first milestone is already live: a testnet MVP with eight signals, an evidence verifier, a dashboard, REST, MCP and x402, plus three mock launches deployed on Elysium testnet with 717 logs and funding transactions re-fetched and matched. The next milestones reuse that working code. The real-token replay tool and facilitator-mode x402 are implemented and only need to be run and published, and the Ascend adapter plugs into the existing indexer once Ascend shares its addresses. Mainnet launch follows Elysium's own launch."
 }

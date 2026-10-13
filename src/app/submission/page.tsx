@@ -39,6 +39,7 @@ const ROADMAP: [string, string, string][] = [
 export default function Submission() {
   const chain = getWorld().fixtures.filter((f) => f.onchain);
   const members = (team as { members: { name: string; role: string; bio?: string; link?: string }[] }).members;
+  const why = (team as { why?: string }).why;
   return (
     <div className="mx-auto max-w-[900px] px-4 pb-10 pt-12 sm:px-6">
       <div className="eyebrow mb-3">Ascend Builder Program · Track 1</div>
@@ -121,9 +122,10 @@ export default function Submission() {
           <SectionHead eyebrow="Team" title="Who is building this." />
           <ul className="grid gap-3 sm:grid-cols-2">
             {members.map((m) => (
-              <li key={m.name} className="card p-5"><div className="font-medium">{m.name}</div><div className="text-[13px] text-muted">{m.role}</div>{m.bio && <p className="mt-2 text-[13px] leading-relaxed text-muted">{m.bio}</p>}{m.link && <a className="mt-2 inline-block text-[13px] underline underline-offset-4" href={m.link} target="_blank" rel="noreferrer">Profile</a>}</li>
+              <li key={m.name} className="card p-5"><div className="font-medium">{m.name}</div><div className="text-[13px] text-muted">{m.role}</div>{m.bio && <p className="mt-2 text-[13px] leading-relaxed text-muted">{m.bio}</p>}{m.link && <a className="mt-2 inline-block text-[13px] underline underline-offset-4" href={m.link} target="_blank" rel="noreferrer">X profile</a>}</li>
             ))}
           </ul>
+          {why && <p className="mt-5 text-[14.5px] leading-relaxed text-muted"><b className="font-medium text-fg">Why we can finish the roadmap.</b> {why}</p>}
         </section>
       )}
     </div>
