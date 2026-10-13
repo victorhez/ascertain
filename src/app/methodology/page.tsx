@@ -46,7 +46,7 @@ export default function Methodology() {
       <div className="prose-a">
         <h2 id="principles" className="scroll-mt-24">Principles</h2>
         <ul>
-          <li><b className="text-fg">Evidence first.</b> A finding is published only if every cited fact re-fetches from chain state, through an independent RPC, and matches byte for byte. Failed findings are withheld and listed, with the reason.</li>
+          <li><b className="text-fg">Evidence first.</b> A finding is published only if every cited fact re-fetches from chain state, through a second, separate RPC source (a different provider when one is configured), and matches byte for byte. Failed findings are withheld and listed, with the reason.</li>
           <li><b className="text-fg">Rules decide, AI advises.</b> Verdicts come from deterministic, versioned rules. Optional AI-written commentary can downgrade a verdict to WAIT or NO-GO. It can never upgrade one.</li>
           <li><b className="text-fg">Effective holders, not raw holders.</b> Linked wallets are merged before counting, so one operator cannot look like hundreds of people.</li>
           <li><b className="text-fg">Honest about limits.</b> Ascend&apos;s real thresholds are internal. Ours are configurable estimates, labelled as such. Known blind spots are listed below.</li>

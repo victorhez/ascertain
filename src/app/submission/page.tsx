@@ -20,7 +20,7 @@ const JUDGE: [string, string][] = [
 
 const CODE: [string, string][] = [
   ["Concentration, funding clusters, same-block entry, wash loops, wallet age, effective holders, volume, market cap", "src/engine/signals.ts"],
-  ["Evidence receipts and the independent verifier", "src/engine/evidence.ts, src/engine/verifier.ts"],
+  ["Evidence receipts and the verifier", "src/engine/evidence.ts, src/engine/verifier.ts"],
   ["Go / Wait / No-go rules and the AI downgrade-only guard", "src/engine/readiness.ts"],
   ["Thresholds (versioned estimates)", "config/thresholds.v1.json"],
   ["Mock launch contracts and the planting script", "contracts/, scripts/plant-testnet.ts"],
@@ -30,7 +30,7 @@ const CODE: [string, string][] = [
 ];
 
 const ROADMAP: [string, string, string][] = [
-  ["Done", "Testnet MVP", "Indexer, eight signals, independent verifier, withheld list, dashboard, REST, MCP, x402 (demo settlement), badge, planner. Three mock launches deployed on Elysium testnet."],
+  ["Done", "Testnet MVP", "Indexer, eight signals, second-source verifier, withheld list, dashboard, REST, MCP, x402 (demo settlement), badge, planner. Three mock launches deployed on Elysium testnet."],
   ["Next", "Real tokens and Ascend adapter", "Replay on real HyperEVM tokens with published results. Ascend hook-pool adapter once addresses and the event interface are available. Settle a real x402 payment on testnet."],
   ["Then", "Mainnet launch through Ascend", "Launch at Elysium mainnet. Alerts for creators and traders. Badge adoption by launched projects."],
   ["Later", "HyperCore-native checks", "Read HyperCore state directly for spot and HIP-3 readiness after the precompiles ship, about four weeks after mainnet."],

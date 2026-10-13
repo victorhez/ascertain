@@ -49,7 +49,7 @@ export function EvidenceList({ findings }: { findings: Finding[] }) {
                                 ? <span className="inline-flex items-center gap-1.5" style={{ color: "var(--go)" }}><Icon name="check" size={14} />identical</span>
                                 : <span className="inline-flex items-center gap-1.5" style={{ color: "var(--nogo)" }}><Icon name="x" size={14} />mismatch</span>}
                             </td>
-                            <td className="text-right"><CopyButton text={r.reproduce} label="cast" /></td>
+                            <td className="text-right">{r.reproduce.startsWith("cast") ? <CopyButton text={r.reproduce} label="cast" /> : <span className="text-[11px] text-dim">simulated</span>}</td>
                           </tr>
                         ))}
                       </tbody>

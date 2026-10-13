@@ -47,7 +47,7 @@ Mirage (MIRA)    412 raw holders  →  38 effective holders     NO-GO
 
 | | |
 | --- | --- |
-| **Evidence-first publishing** | A finding is published only if every fact it cites re-fetches from chain state through an independent RPC and matches byte for byte. Failures are *withheld* and listed publicly, with the reason. Remove the verifier and nothing is published. |
+| **Evidence-first publishing** | A finding is published only if every fact it cites re-fetches from chain state through a second, separate RPC source and matches byte for byte. Failures are *withheld* and listed publicly, with the reason. Remove the verifier and nothing is published. |
 | **Rules in code, AI only advises** | Verdicts come from deterministic, versioned rules. Optional AI commentary can downgrade a verdict to WAIT or NO-GO. It can never upgrade one. |
 | **Effective holders, not raw holders** | Wallets are merged by shared funding source, same-block entry and wash loops before counting, so one operator cannot look like 400 people. |
 | **Built for Ascend's lifecycle** | Maps to the published criteria and shows what is known and unknown at every stage. |
@@ -89,7 +89,7 @@ flowchart LR
   A[Chain RPC<br/>Elysium · HyperEVM] --> B[Indexer<br/>raw logs, txs, nonces]
   B --> C[Signal engine<br/>deterministic, versioned]
   C --> D[Findings + evidence receipts]
-  D --> E{Verifier<br/>independent RPC<br/>byte-for-byte}
+  D --> E{Verifier<br/>second RPC source<br/>byte-for-byte}
   E -- match --> F[Published]
   E -- mismatch --> G[Withheld list<br/>with reason]
   F --> H[Rules → GO / WAIT / NO-GO]
@@ -136,8 +136,8 @@ claude mcp add ascertain -e ASCERTAIN_URL=https://<deployment> -- npx -y ascerta
 
 | Question | Where |
 | --- | --- |
-| Paste a token, get a verdict with evidence | `/token/MIRA`, `/token/LUMEN` (live app) |
-| "Delete the verifier and nothing is published" | `/token/MIRA?verifier=off`, `tests/engine.test.ts` |
+| Paste a token, get a verdict with evidence | `/token/LUMT`, `/token/MIRT` (on-chain on Elysium testnet), live app |
+| "Delete the verifier and nothing is published" | `/token/MIRT?verifier=off`, `tests/engine.test.ts` |
 | Withheld list | `/withheld` |
 | Each signal's code | [`src/engine/signals.ts`](src/engine/signals.ts) (`concentration`, `fundingClusters`, `sameBlockEntry`, `washLoops`, `walletAge`, `effectiveHolders`, `volumePerWallet`, `marketCap`) |
 | Verifier | [`src/engine/verifier.ts`](src/engine/verifier.ts) |
@@ -163,7 +163,7 @@ Copy `.env.example` to `.env.local` to configure RPCs, x402 and optional AI comm
 ```text
 src/engine      signals, verifier, readiness rules, evidence receipts
 src/chain       codec, RPC source (viem), read-only token probe
-src/fixtures    seeded launches with planted ground truth, independent chain replica, back-test
+src/fixtures    seeded launches with planted ground truth, simulated chain replica, back-test
 src/x402        pay-per-answer (verify, settle, client signing)
 src/app         Next.js app: dashboard, API routes, badge, agent card
 mcp/            MCP server (stdio)
@@ -175,17 +175,30 @@ evidence/       back-test summary and per-finding evidence JSON
 ## Honest limits
 
 - **Ascend's thresholds are internal.** Ours are estimates from public criteria, configurable and labelled. Nothing here is an official Ascend decision.
-- **Elysium mainnet is pre-launch** with no published date. Ascertain ships against the testnet chain model; mainnet is a roadmap milestone. HyperCore precompiles are not depended on.
+- **Elysium mainnet is pre-launch** with no published date. Three launches are deployed on Elysium testnet and five more are simulated; mainnet is a roadmap milestone. HyperCore precompiles are not depended on.
 - **Five more launches on the site are simulated** and labelled as such; three launches are on-chain on Elysium testnet. Ascend hook-pool addresses and interface are not yet available to us; the adapter plugs in once published. On-chain receipts are recorded from the testnet RPC (same provider as the indexer; an independent second provider is not yet configured) and can be re-verified live with `?live=1`.
 - **Replay on real tokens** is implemented for the ERC-20 adapter (concentration + verification) but not yet run for published results.
 - **Receipts verify a sample** of cited facts plus a digest; derived metrics are recomputed deterministically from stored raw logs.
 - **No audit is claimed.** Findings describe observable on-chain patterns, never intent. Clusters are shown as "linked by funding source".
 - Known blind spots (market-maker bots, new shared infrastructure, careful operators) are listed on `/methodology#blind-spots`.
 
+## Blind-spot cases and how they are handled
+
+Pinned by `tests/blindspots.test.ts`:
+
+| Case | Flagged? | Handling |
+| --- | --- | --- |
+| Market maker, varied sizes, real net position | No | Wash needs paired same-size round trips within an hour |
+| Bot trading exact-size round trips | **Yes** | Documented false positive; finding states the observed pattern, not intent |
+| New exchange hot wallet funding unrelated wallets | **Yes** until listed | Add to `ignoredFunders`; test shows the cluster disappears |
+| Airdrop cohort funded by one distributor | **Yes** | Shown as "linked by funding source", never as malicious |
+| Smart-contract wallets with zero nonce | Counted fresh | Documented limitation |
+| Many wallets, one block, very different sizes | No | A bundle needs near-identical sizes |
+
 ## Roadmap
 
-1. **Now (testnet MVP):** indexer, signal engine, verifier, dashboard, REST, MCP, x402, badge, planner.
-2. **Next:** Ascend hook-pool adapter once addresses and interface are available; deploy mock launches to Elysium testnet; public analyses of real HyperEVM tokens via replay; alerts (creator readiness changes, trader NO-GO flips).
+1. **Done (testnet MVP):** indexer, signal engine, verifier, dashboard, REST, MCP, x402 (demo settlement), badge, planner, three mock launches deployed on Elysium testnet.
+2. **Next:** Ascend hook-pool adapter once addresses and interface are available; replay results on real HyperEVM tokens; public analyses of real HyperEVM tokens via replay; alerts (creator readiness changes, trader NO-GO flips).
 3. **Mainnet:** launch through Ascend at Elysium mainnet; free verdict tier, paid API, badge adoption by launched projects.
 4. **After HyperCore precompiles ship (~4 weeks after mainnet):** read HyperCore state directly for spot and HIP-3 readiness signals.
 

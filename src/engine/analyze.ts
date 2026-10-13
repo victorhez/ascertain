@@ -80,6 +80,7 @@ export async function analyze(ds: Dataset, opts: AnalyzeOptions): Promise<Analys
   const now = opts.now ?? new Date();
   const { L, findings, clu, bun, wash } = computeFindings(ds, cfg);
   const verified = await verifyFindings(findings, opts.verifier, opts.rpcLabel ?? {}, now);
+  if (!ds.token.onchain) for (const f of verified) for (const r of f.receipts ?? []) r.reproduce = "simulated launch: no chain command";
   const published = verified.filter((f) => f.status === "published");
   const withheld = verified.filter((f) => f.status === "withheld");
 

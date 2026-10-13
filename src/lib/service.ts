@@ -94,7 +94,7 @@ export function readinessPayload(a: Analysis, intent: Intent, origin: string, fi
     inputsDigest: v.inputsDigest,
     headBlock: a.headBlock,
     verifiedAt: a.verifiedAt,
-    verifier: a.verifierEnabled ? "independent-rpc" : "none",
+    verifier: a.verifierEnabled ? "second-source" : "none",
     findings: a.findings.map((f) => ({ id: f.id, signal: f.signal, status: f.status, evidenceUrl: `${origin}/v1/evidence/${f.id}`, withheldReason: f.withheldReason })),
     simulated: !!fixture && !fixture.onchain,
     dataSource: fixture?.onchain ? "Mock launch deployed on Elysium testnet (chain 99801); logs and receipts re-fetched via JSON-RPC." : fixture ? "Simulated Elysium-testnet launch (deterministic fixture with planted ground truth)." : "Live chain read via JSON-RPC.",

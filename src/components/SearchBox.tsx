@@ -21,7 +21,7 @@ export function SearchBox({ examples = [] as { symbol: string; label: string }[]
         <label htmlFor="token-q" className="sr-only">Token address or symbol</label>
         <input
           id="token-q" autoFocus={autoFocus} value={v} onChange={(e) => setV(e.target.value)} spellCheck={false} autoComplete="off"
-          placeholder="Paste a token address or try MIRA"
+          placeholder="Paste a token address or try MIRT"
           className="mono h-11 min-w-0 flex-1 bg-transparent text-[14.5px] outline-none placeholder:text-dim"
         />
         <button type="submit" className="btn btn-primary h-11">Check <Icon name="arrow" size={16} /></button>

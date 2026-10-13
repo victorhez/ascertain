@@ -89,7 +89,7 @@ export default async function TokenPage({ params, searchParams }: Props) {
       {!verifierOn && (
         <div className="mt-6 flex gap-3 rounded-2xl border p-4 text-[14px]" style={{ borderColor: "var(--nogo)", background: "color-mix(in oklab, var(--nogo) 9%, transparent)" }}>
           <span style={{ color: "var(--nogo)" }}><Icon name="alert" /></span>
-          <p className="leading-relaxed"><b className="font-medium">Verifier removed.</b> With no independent re-fetch, every finding is withheld and no verdict can be asserted. That is the evidence-first guarantee: <Link className="underline underline-offset-4" href={q({ verifier: "on" })}>turn the verifier back on</Link> to publish.</p>
+          <p className="leading-relaxed"><b className="font-medium">Verifier removed.</b> With no second-source re-fetch, every finding is withheld and no verdict can be asserted. That is the evidence-first guarantee: <Link className="underline underline-offset-4" href={q({ verifier: "on" })}>turn the verifier back on</Link> to publish.</p>
         </div>
       )}
 

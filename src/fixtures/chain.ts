@@ -3,7 +3,7 @@ import type { ChainSource } from "@/chain/source";
 import type { Address, Dataset, Hex, RawLog, RawTx, Transfer } from "@/engine/types";
 
 /**
- * An independent replica of the canonical (truth) chain state.
+ * A simulated replica of the canonical (truth) chain state.
  * Plays the role of "RPC provider B" in the verifier.
  */
 export class FixtureChain implements ChainSource {
@@ -12,7 +12,7 @@ export class FixtureChain implements ChainSource {
   private txs = new Map<string, RawTx>();
   private transfers: { t: Transfer; token: string }[] = [];
 
-  constructor(truth: Dataset[], private nonces: Record<string, number>, id = "elysium-testnet · replica B (independent)") {
+  constructor(truth: Dataset[], private nonces: Record<string, number>, id = "elysium-testnet · replica B (simulated replica)") {
     this.id = id;
     for (const ds of truth) {
       for (const l of ds.logs) {

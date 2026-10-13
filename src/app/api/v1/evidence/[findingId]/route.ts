@@ -15,7 +15,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ findingId: stri
       finding: { ...finding, receipts: undefined },
       token: { address: analysis.token.address, symbol: analysis.token.symbol, chainId: analysis.token.chainId },
       receipts: finding.receipts ?? [],
-      reproduceAll: (finding.receipts ?? []).map((r) => r.reproduce),
+      reproduceAll: (finding.receipts ?? []).map((r) => r.reproduce).filter((c) => c.startsWith("cast")),
       simulated: !!fixture,
       note: fixture
         ? "Simulated launch. The cast commands are the exact queries that re-fetch these facts once the planted contracts in /contracts are deployed to Elysium testnet; the built-in verifier replays the same queries against an independent replica."

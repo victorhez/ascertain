@@ -16,7 +16,9 @@ export default async function Home() {
   const eff = mira.findings.find((f) => f.signal === "effective_holders")!.value;
   const clusters = mira.findings.find((f) => f.signal === "funding_clusters")!;
   const sizes: number[] = clusters.value.clusters.map((c: any) => c.size);
-  const receipt = clusters.receipts?.find((r) => r.kind === "tx");
+  const mirt = (await getAnalysis("MIRT"))!.analysis;
+  const proof = mirt.findings.find((f) => f.signal === "funding_clusters")!;
+  const receipt = proof.receipts?.find((r) => r.kind === "tx");
   const withheld = tokens.flatMap((t) => t.withheld ? [t] : []).length;
 
   return (
@@ -33,7 +35,7 @@ export default async function Home() {
               Ascertain separates real participants from coordinated and wash activity, then returns a <b className="font-medium text-fg">Go, Wait or No-go</b> verdict for where a token stands in the Ascend lifecycle. Every claim ships with evidence anyone can re-fetch from chain state.
             </p>
             <div className="rise mt-9 max-w-[34rem]" style={{ ["--d" as string]: ".2s" }}>
-              <SearchBox examples={[{ symbol: "LUMEN", label: "organic" }, { symbol: "MIRA", label: "clustered" }, { symbol: "WAVE", label: "wash" }]} />
+              <SearchBox examples={[{ symbol: "LUMT", label: "on-chain · clean" }, { symbol: "MIRT", label: "on-chain · clustered" }, { symbol: "WAVT", label: "on-chain · wash" }]} />
             </div>
             <div className="rise mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-muted" style={{ ["--d" as string]: ".28s" }}>
               <span className="inline-flex items-center gap-2"><Icon name="check" size={15} />No custody</span>
@@ -78,13 +80,13 @@ export default async function Home() {
       {/* ------------------------------------------------------------ how it works */}
       <section className="mx-auto mt-28 max-w-[1180px] px-4 sm:px-6">
         <SectionHead eyebrow="How it works" title="From raw logs to a verdict you can audit.">
-          Four stages, each deterministic and versioned. Nothing is published that has not survived an independent re-fetch.
+          Four stages, each deterministic and versioned. Nothing is published that has not survived a second, separate re-fetch.
         </SectionHead>
         <ol className="grid gap-4 md:grid-cols-4">
           {[
             ["01", "layers", "Index", "Raw logs, block numbers and transaction hashes from Elysium (or any EVM chain) land in Postgres-style storage. Never only derived numbers."],
             ["02", "eye", "Detect", "Concentration, funding-source clusters, same-block entry, wash loops and wallet age. Linked wallets merge into effective holders."],
-            ["03", "shield", "Verify", "A separate verifier re-fetches every cited fact from an independent RPC and compares byte for byte. Failures are withheld, in public."],
+            ["03", "shield", "Verify", "A separate verifier re-fetches every cited fact from a second RPC source and compares byte for byte. Failures are withheld, in public."],
             ["04", "bolt", "Decide", "Versioned thresholds produce GO, WAIT or NO-GO. AI commentary can veto a Go. It can never unlock one."],
           ].map(([n, ic, t, d]) => (
             <li key={n} className="card p-5">
@@ -105,7 +107,7 @@ export default async function Home() {
             A finding goes live only if every fact it cites re-fetches from chain state and matches. If one does not, the claim is withheld and listed, with the reason. Try it on any token page: switch the verifier off and watch every finding drop.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/token/MIRA?verifier=off" className="btn btn-primary">See it with the verifier off <Icon name="arrow" size={16} /></Link>
+            <Link href="/token/MIRT?verifier=off" className="btn btn-primary">See it with the verifier off <Icon name="arrow" size={16} /></Link>
             <Link href="/withheld" className="btn">{withheld} tokens with withheld findings</Link>
           </div>
         </div>
@@ -115,9 +117,10 @@ export default async function Home() {
             <span className="pill pill-go !h-[22px] !text-[11px]"><Icon name="check" size={12} />verified byte-for-byte</span>
           </div>
           <div className="space-y-3 p-5 text-[12.5px]">
-            <Row k="finding" v={clusters.id} />
-            <Row k="signal" v={`${clusters.signal} · ${clusters.ruleVersion}`} />
-            <Row k="claim" v={clusters.summary} wrap />
+            <Row k="finding" v={proof.id} />
+            <Row k="token" v="MIRT · on-chain mock launch, Elysium testnet" />
+            <Row k="signal" v={`${proof.signal} · ${proof.ruleVersion}`} />
+            <Row k="claim" v={proof.summary} wrap />
             {receipt && <>
               <Row k="chain / block" v={`${receipt.chainId} · ${receipt.blockNumber.toLocaleString("en-US")}`} />
               <Row k="tx" v={short(receipt.txHash ?? "", 14, 10)} />
