@@ -6,6 +6,7 @@ const links = [
   { href: "/tokens", label: "Tokens" },
   { href: "/methodology", label: "Methodology" },
   { href: "/agents", label: "Agents" },
+  { href: "/real", label: "Real tokens" },
   { href: "/withheld", label: "Withheld" },
   { href: "/submission", label: "Judge guide" },
 ];

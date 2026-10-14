@@ -26,6 +26,10 @@ export interface Fixture {
   verifier?: ChainSource;
   /** Live re-verification against the testnet RPC (slow, rate-limited). */
   liveVerifier?: ChainSource;
+  /** Real token on HyperEVM mainnet, replayed read-only (holder-integrity signals only). */
+  real?: boolean;
+  /** Replay report: infrastructure ignored, flagged clusters for hand-checking. */
+  report?: any;
 }
 
 export interface FixtureWorld {
@@ -87,6 +91,17 @@ export function getWorld(): FixtureWorld {
       const fp = path.join(dir, `${j.dataset.token.symbol}.fetches.json`);
       const verifier = existsSync(fp) ? new CachedSource(JSON.parse(readFileSync(fp, "utf8")) as Fetches, label) : liveVerifier;
       fixtures.push({ key: j.dataset.token.symbol.toLowerCase(), truth: j.dataset, indexer: j.dataset, info: j.info, drift: null, onchain: true, verifier, liveVerifier });
+    }
+  }
+  const rdir = path.join(process.cwd(), "data", "real");
+  if (existsSync(rdir)) {
+    const rlabel = "HyperEVM RPC (Alchemy; same provider as indexer)";
+    for (const f of readdirSync(rdir).filter((x) => x.endsWith(".dataset.json")).sort()) {
+      const j = JSON.parse(readFileSync(path.join(rdir, f), "utf8"));
+      const fp = path.join(rdir, f.replace(".dataset.json", ".fetches.json"));
+      if (!existsSync(fp)) continue;
+      const info = { scenario: "real", expectedVerdict: "WAIT" as const, rawHolders: 0, organicHolders: 0, plantedEffectiveHolders: 0, plantedClusters: [], plantedWashWallets: [], plantedBundles: [] };
+      fixtures.push({ key: j.dataset.token.symbol.toLowerCase(), truth: j.dataset, indexer: j.dataset, info, drift: null, real: true, report: j.report, verifier: new CachedSource(JSON.parse(readFileSync(fp, "utf8")) as Fetches, rlabel) });
     }
   }
   world = { fixtures, chainB: new FixtureChain(fixtures.map((f) => f.truth), nonceTruth) };

@@ -51,7 +51,7 @@ export function buildLedger(ds: Dataset): Ledger {
     else balances.set(t.to, (balances.get(t.to) ?? 0n) + t.amount);
   }
 
-  const infra = new Set<string>([pool, BURN_ADDRESS, ZERO_ADDRESS]);
+  const infra = new Set<string>([pool, BURN_ADDRESS, ZERO_ADDRESS, ...(ds.excludedHolders ?? []).map(lc)]);
   const holders: Holder[] = [];
   for (const [address, balance] of balances) {
     if (balance > 0n && !infra.has(address)) holders.push({ address: address as Address, balance, tokens: scaled(balance, dec) });

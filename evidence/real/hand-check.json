@@ -1,0 +1,7 @@
+{
+  "reviewed": false,
+  "reviewer": null,
+  "date": null,
+  "decisions": {},
+  "note": "Each flagged cluster is opened on the explorer. decisions maps 'SYMBOL:Cn' to 'confirmed' or 'rejected' with a reason."
+}

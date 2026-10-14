@@ -13,3 +13,4 @@ mcp/node_modules
 evidence/replay-*.json
 
 .vercel
+data/real/*.transfers.json

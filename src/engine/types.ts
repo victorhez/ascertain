@@ -17,6 +17,8 @@ export interface TokenMeta {
   source: "fixture" | "rpc";
   /** True when the launch exists on a real chain (testnet), not only in the simulator. */
   onchain?: boolean;
+  /** A real token on a production chain (HyperEVM mainnet), replayed read-only. */
+  real?: boolean;
   summary: string;
   /** Present for fixtures only: what the generator planted. */
   scenario?: string;
@@ -59,6 +61,12 @@ export interface Dataset {
   ignoredFunders?: string[];
   /** Threshold profile. "testnet-scale" shrinks growth bars to the size of mock launches. */
   profile?: "testnet-scale";
+  /** Contracts and exchanges that hold supply but are not holders in the human sense (pools, vaults, bridges). Excluded like the pool. */
+  excludedHolders?: string[];
+  /** Real-token replay: only holder-integrity signals are computed (no swap adapter for the token's DEXes yet). */
+  partial?: string;
+  /** Holders whose funding and nonce were looked up (top-K by balance). Wallet-age and the effective-holders ratio use only these. */
+  analysisUniverse?: string[];
 }
 
 export interface Transfer { from: Address; to: Address; amount: bigint; blockNumber: number; txHash: Hex; logIndex: number }

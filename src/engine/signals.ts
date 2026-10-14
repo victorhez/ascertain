@@ -317,7 +317,9 @@ export function washLoops(L: Ledger, cfg: EngineConfig): SignalOutput & { washWa
 export function walletAge(L: Ledger, cfg: EngineConfig): SignalOutput & { freshWallets: Set<string> } {
   const fresh = new Set<string>();
   const nonces: number[] = [];
-  for (const h of L.holders) {
+  const uni = L.ds.analysisUniverse ? new Set(L.ds.analysisUniverse.map(lc)) : null;
+  const pool = uni ? L.holders.filter((h) => uni.has(h.address)) : L.holders;
+  for (const h of pool) {
     const nonce = L.ds.nonces[h.address] ?? 0;
     nonces.push(nonce);
     const fund = L.firstFunding.get(h.address);
@@ -325,7 +327,7 @@ export function walletAge(L: Ledger, cfg: EngineConfig): SignalOutput & { freshW
     const recent = !fund || !buy ? true : buy.blockNumber - fund.blockNumber <= cfg.signals.freshWindowBlocks;
     if (nonce <= cfg.signals.freshMaxNonce && recent) fresh.add(h.address);
   }
-  const sorted = L.holders.map((h) => h.address).sort();
+  const sorted = pool.map((h) => h.address).sort();
   const freshList = sorted.filter((a) => fresh.has(a));
   const otherList = sorted.filter((a) => !fresh.has(a));
   const refs = [
@@ -333,11 +335,11 @@ export function walletAge(L: Ledger, cfg: EngineConfig): SignalOutput & { freshW
     ...sample(freshList, 16).map((a) => nonceRef(L, a)),
     ...sample(otherList, 7).map((a) => nonceRef(L, a)),
   ];
-  const share = L.holders.length ? fresh.size / L.holders.length : 0;
+  const share = pool.length ? fresh.size / pool.length : 0;
   return {
     title: "Wallet age and activity",
     summary: `${(share * 100).toFixed(1)}% of holders are fresh wallets (≤${cfg.signals.freshMaxNonce} lifetime transactions, funded shortly before first buy).`,
-    value: { freshCount: fresh.size, holders: L.holders.length, freshShare: round(share), medianNonce: median(L.holders.map((h) => L.ds.nonces[h.address] ?? 0)) },
+    value: { freshCount: fresh.size, holders: pool.length, freshShare: round(share), medianNonce: median(pool.map((h) => L.ds.nonces[h.address] ?? 0)) },
     evidence: dedupe(refs),
     freshWallets: fresh,
   };
@@ -359,8 +361,18 @@ export function effectiveHolders(
 
   const comps = new Set<string>();
   for (const h of L.holders) comps.add(dsu.find(h.address));
-  const raw = L.holders.length;
-  const effective = comps.size;
+  let raw = L.holders.length;
+  let effective = comps.size;
+  let ratio = raw ? effective / raw : 1;
+  let analyzed: number | undefined;
+  if (L.ds.analysisUniverse) {
+    const uni = new Set(L.ds.analysisUniverse.map(lc));
+    const inU = L.holders.filter((h) => uni.has(h.address));
+    analyzed = inU.length;
+    const compsU = new Set(inU.map((h) => dsu.find(h.address)));
+    ratio = analyzed ? compsU.size / analyzed : 1;
+    effective = raw - (analyzed - compsU.size);
+  }
 
   const reductions = [
     ...parts.clusters.map((c) => ({ reason: "funding cluster", id: c.id, wallets: c.wallets.filter((w) => (L.balances.get(w) ?? 0n) > 0n).length })),
@@ -373,7 +385,7 @@ export function effectiveHolders(
   return {
     title: "Effective holders",
     summary: `${raw} raw holders collapse to ${effective} effective holders after merging linked wallets.`,
-    value: { raw, effective, ratio: round(raw ? effective / raw : 1), reductions },
+    value: { raw, effective, ratio: round(ratio), reductions, ...(analyzed !== undefined ? { analyzedTopHolders: analyzed } : {}) },
     evidence: dedupe([totalSupplyRef(L), ...upstreamEvidence]).slice(0, cfg.signals.evidenceCap.perFinding),
     dsu,
     effective,

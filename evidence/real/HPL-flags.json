@@ -1,0 +1,225 @@
+{
+  "token": {
+    "symbol": "HPL",
+    "name": "HyperLend",
+    "address": "0xbd6dab50f03a305a80037294fa8d1a9dc0cac91b",
+    "pool": "0x30634903EeD4c3f624B73E3A2F793eBbBc710aA7",
+    "launchBlock": 37857073,
+    "note": "Newer protocol token"
+  },
+  "snapshotBlock": 48477346,
+  "holdersTotal": 4428,
+  "analyzedTopHolders": 1000,
+  "infra": [
+    {
+      "address": "0x2222222222222222222222222222222222222222",
+      "reason": "system address"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000000",
+      "reason": "system address"
+    },
+    {
+      "address": "0x91604f590d66ace8975eed6bd16cf55647d1c499",
+      "reason": "very busy account (nonce 169790)"
+    },
+    {
+      "address": "0xf70da97812cb96acdf810712aa562db8dfa3dbef",
+      "reason": "very busy account (nonce 785823)"
+    },
+    {
+      "address": "0x8c826f795466e39acbff1bb4eeeb759609377ba1",
+      "reason": "very busy account (nonce 128024)"
+    },
+    {
+      "address": "0x8d25fb438c6efcd08679ffa82766869b50e24608",
+      "reason": "very busy account (nonce 73842)"
+    },
+    {
+      "address": "0xf89d7b9c864f589bbf53a82105107622b35eaa40",
+      "reason": "very busy account (nonce 67767)"
+    },
+    {
+      "address": "0x2dff20fcc5d39998ce0929afb54f2e4d2463057c",
+      "reason": "very busy account (nonce 22336)"
+    },
+    {
+      "address": "0x6cb72940f324c136faebab7802ef181eccc42d09",
+      "reason": "very busy account (nonce 24231)"
+    },
+    {
+      "address": "0x57955467e2fd905dbb3026963a144dcacd566687",
+      "reason": "very busy account (nonce 25619)"
+    },
+    {
+      "address": "0x62e10f1022652aa3b1330335de94b64bbd7cf1a7",
+      "reason": "very busy account (nonce 32554)"
+    },
+    {
+      "address": "0x1b0bb20d345a2699dd65eb316114c8786ac90761",
+      "reason": "very busy account (nonce 28255)"
+    }
+  ],
+  "flags": [
+    {
+      "id": "C1",
+      "size": 6,
+      "root": "0x27567c705a6d2b41f62990c8177a31be99b21e1a",
+      "hops": 1,
+      "rootInfo": {
+        "contract": false,
+        "nonce": 8531
+      },
+      "rootLink": "https://hypurrscan.io/address/0x27567c705a6d2b41f62990c8177a31be99b21e1a",
+      "sampleWallets": [
+        {
+          "wallet": "0x849d4820395e07e51683b578acc1e981befe08c6",
+          "link": "https://hypurrscan.io/address/0x849d4820395e07e51683b578acc1e981befe08c6",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xdf146a2e90efcd90bd718bd191612e7dd038ddb74975eba0efe945dec4d3b04e"
+        },
+        {
+          "wallet": "0x8678992985fb0c70578199565ab6a3025f6349ec",
+          "link": "https://hypurrscan.io/address/0x8678992985fb0c70578199565ab6a3025f6349ec",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xf72e2b2e7952037942cbec1ac638ce9290ca926e092f5879afb1c42cccbbf820"
+        },
+        {
+          "wallet": "0x89425a801dbbacd4562638161198b6d3b85a314c",
+          "link": "https://hypurrscan.io/address/0x89425a801dbbacd4562638161198b6d3b85a314c",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x8067130963f0c5b3ed2750e0d22cc001641d233710baa6a7e1075c4e7f982a9f"
+        },
+        {
+          "wallet": "0x981c059a42866915db3284674ba6572fed3e254a",
+          "link": "https://hypurrscan.io/address/0x981c059a42866915db3284674ba6572fed3e254a",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xce124f33dbe6ed2d8f472d38b192b09ba0bb33cbd34d40524b0ae760d9147304"
+        },
+        {
+          "wallet": "0xe86ced68d07cafa9b49e2b5e9e592f340341f2d5",
+          "link": "https://hypurrscan.io/address/0xe86ced68d07cafa9b49e2b5e9e592f340341f2d5",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x03b32aa56fb704c77c1d5093be163b24877dab8894300afa5dd571a7878de98f"
+        }
+      ],
+      "wallets": [
+        "0x849d4820395e07e51683b578acc1e981befe08c6",
+        "0x8678992985fb0c70578199565ab6a3025f6349ec",
+        "0x89425a801dbbacd4562638161198b6d3b85a314c",
+        "0x981c059a42866915db3284674ba6572fed3e254a",
+        "0xe86ced68d07cafa9b49e2b5e9e592f340341f2d5",
+        "0xf92e629940795d42181eedcb28140dd53b0983b4"
+      ],
+      "signature": {
+        "fundedAmountHYPE": {
+          "min": 0.31,
+          "max": 8.36
+        },
+        "fundingBlockSpread": 5376453,
+        "tokenBalanceRange": {
+          "min": 104.3,
+          "max": 2238.157
+        },
+        "shareOfCirculating": 0.00007309507057495257,
+        "withNonceUnder5": 0
+      },
+      "handCheck": "pending"
+    },
+    {
+      "id": "C2",
+      "size": 4,
+      "root": "0x7becce9b454cc20c589245b22e9c3cf8da90a1ad",
+      "hops": 1,
+      "rootInfo": {
+        "contract": false,
+        "nonce": 474
+      },
+      "rootLink": "https://hypurrscan.io/address/0x7becce9b454cc20c589245b22e9c3cf8da90a1ad",
+      "sampleWallets": [
+        {
+          "wallet": "0x803e0b0c5f6207a4e68e69f997f1786d782761e2",
+          "link": "https://hypurrscan.io/address/0x803e0b0c5f6207a4e68e69f997f1786d782761e2",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xe106c5a85ffb78a96f02793a58ed6885d64f6a9df74dde2137569fb8ea51d9bd"
+        },
+        {
+          "wallet": "0x94e467d817fd12b427f714ea16bcdbdd6dce0762",
+          "link": "https://hypurrscan.io/address/0x94e467d817fd12b427f714ea16bcdbdd6dce0762",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xb2b95821f0a6930e23f36901c7dcaf921d20e6aec74a945362b024c9eb3418c5"
+        },
+        {
+          "wallet": "0xaf0895258d5fb486d69738e53cc65f6d4832783e",
+          "link": "https://hypurrscan.io/address/0xaf0895258d5fb486d69738e53cc65f6d4832783e",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x8370cd212d75dbae00fe4a03672f342fb2ef09ae214fe5856f5b103514bc09b7"
+        },
+        {
+          "wallet": "0xe2ce948e2b311048f466cc39d524611be9609bae",
+          "link": "https://hypurrscan.io/address/0xe2ce948e2b311048f466cc39d524611be9609bae",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x7e7fa2fbc2d7b738b37b0d7c7358615c7ccd91b7680d0e60d2448876ad7389be"
+        }
+      ],
+      "wallets": [
+        "0x803e0b0c5f6207a4e68e69f997f1786d782761e2",
+        "0x94e467d817fd12b427f714ea16bcdbdd6dce0762",
+        "0xaf0895258d5fb486d69738e53cc65f6d4832783e",
+        "0xe2ce948e2b311048f466cc39d524611be9609bae"
+      ],
+      "signature": {
+        "fundedAmountHYPE": {
+          "min": 0.151,
+          "max": 0.176
+        },
+        "fundingBlockSpread": 4,
+        "tokenBalanceRange": {
+          "min": 122.709,
+          "max": 122.807
+        },
+        "shareOfCirculating": 0.00001211778013643748,
+        "withNonceUnder5": 0
+      },
+      "handCheck": "pending"
+    },
+    {
+      "id": "C3",
+      "size": 3,
+      "root": "0x0aee1665afd0c14615b538333fd6f97e4a8cbf98",
+      "hops": 1,
+      "rootInfo": {
+        "contract": false,
+        "nonce": 13840
+      },
+      "rootLink": "https://hypurrscan.io/address/0x0aee1665afd0c14615b538333fd6f97e4a8cbf98",
+      "sampleWallets": [
+        {
+          "wallet": "0x2265982a338113fe6e432fc1686049eacb0f913e",
+          "link": "https://hypurrscan.io/address/0x2265982a338113fe6e432fc1686049eacb0f913e",
+          "firstFundingTx": "https://hypurrscan.io/tx/0xbab57325a17fc7ac4570167c53d48b34a7536d84638db25c32713b02232ddf39"
+        },
+        {
+          "wallet": "0x3fdbdf68305d20aa5d66293c341d2ab4ba719acd",
+          "link": "https://hypurrscan.io/address/0x3fdbdf68305d20aa5d66293c341d2ab4ba719acd",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x1476dbd747579ce218e21e20cebe5b6355a6fb81e01f7d5b221a2108604a6571"
+        },
+        {
+          "wallet": "0x7cf0e350a1b7a6aa13f90513de120f8b74f50856",
+          "link": "https://hypurrscan.io/address/0x7cf0e350a1b7a6aa13f90513de120f8b74f50856",
+          "firstFundingTx": "https://hypurrscan.io/tx/0x9d71ff70679113c3fb9907e8ba2b22e1cfc5163fc35a0bef8b306c28dfaa8d3e"
+        }
+      ],
+      "wallets": [
+        "0x2265982a338113fe6e432fc1686049eacb0f913e",
+        "0x3fdbdf68305d20aa5d66293c341d2ab4ba719acd",
+        "0x7cf0e350a1b7a6aa13f90513de120f8b74f50856"
+      ],
+      "signature": {
+        "fundedAmountHYPE": {
+          "min": 0.038002,
+          "max": 4.704821
+        },
+        "fundingBlockSpread": 18398344,
+        "tokenBalanceRange": {
+          "min": 1006.079,
+          "max": 12651.84
+        },
+        "shareOfCirculating": 0.0003863433881668159,
+        "withNonceUnder5": 1
+      },
+      "handCheck": "pending"
+    }
+  ]
+}

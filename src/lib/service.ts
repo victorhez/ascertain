@@ -59,8 +59,9 @@ export function summarize(a: Analysis, fixture?: Fixture) {
     verifiedAt: a.verifiedAt,
     withheld: a.withheld.length,
     published: a.published.length,
-    simulated: !!fixture && !fixture.onchain,
+    simulated: !!fixture && !fixture.onchain && !fixture.real,
     onchain: !!fixture?.onchain,
+    real: !!fixture?.real,
   };
 }
 
@@ -96,8 +97,8 @@ export function readinessPayload(a: Analysis, intent: Intent, origin: string, fi
     verifiedAt: a.verifiedAt,
     verifier: a.verifierEnabled ? "second-source" : "none",
     findings: a.findings.map((f) => ({ id: f.id, signal: f.signal, status: f.status, evidenceUrl: `${origin}/v1/evidence/${f.id}`, withheldReason: f.withheldReason })),
-    simulated: !!fixture && !fixture.onchain,
-    dataSource: fixture?.onchain ? "Mock launch deployed on Elysium testnet (chain 99801); logs and receipts re-fetched via JSON-RPC." : fixture ? "Simulated Elysium-testnet launch (deterministic fixture with planted ground truth)." : "Live chain read via JSON-RPC.",
+    simulated: !!fixture && !fixture.onchain && !fixture.real,
+    dataSource: fixture?.real ? "Real token on HyperEVM mainnet (chain 999). Holder-integrity signals only; volume and market-cap are not computed yet." : fixture?.onchain ? "Mock launch deployed on Elysium testnet (chain 99801); logs and receipts re-fetched via JSON-RPC." : fixture ? "Simulated Elysium-testnet launch (deterministic fixture with planted ground truth)." : "Live chain read via JSON-RPC.",
     thresholds: { status: defaultConfig.status, basis: defaultConfig.basis },
     disclaimer: DISCLAIMER,
   };

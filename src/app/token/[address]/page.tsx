@@ -67,12 +67,14 @@ export default async function TokenPage({ params, searchParams }: Props) {
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="chip">{a.token.chainName} · {a.token.chainId}</span>
-            {fixture && (fixture.onchain
+            {fixture?.real && <span className="chip" style={{ color: "var(--go)" }}>Real token · HyperEVM mainnet · replay</span>}
+            {fixture && !fixture.real && (fixture.onchain
               ? <span className="chip" style={{ color: "var(--go)" }}>On-chain mock launch · Elysium testnet · {SCENARIO_LABEL[a.token.scenario ?? ""]}</span>
               : <span className="chip" style={{ color: "var(--wait)" }}>Simulated launch · {SCENARIO_LABEL[a.token.scenario ?? ""]}</span>)}
             {fixture?.onchain && <a className="chip chip-link" href={`https://elysium.kinetiq.xyz/address/${a.token.address}`} target="_blank" rel="noreferrer">Explorer ↗</a>}
+            {fixture?.real && <a className="chip chip-link" href={`https://hypurrscan.io/address/${a.token.address}`} target="_blank" rel="noreferrer">Explorer ↗</a>}
             <span className="chip mono">{short(a.token.address, 8, 6)}<CopyButton text={a.token.address} label="" className="!h-5 !w-5 !border-0 !p-0" /></span>
-            <span className="chip"><span className="live-dot" />{fixture?.onchain ? (sp.live === "1" ? `re-verified live ${ago(a.verifiedAt)}` : `receipts recorded from Elysium testnet RPC ${a.published[0]?.verifierRpc?.split("fetched ")[1] ?? ""}`) : `verified against replica B (simulated) ${ago(a.verifiedAt)}`}</span>
+            <span className="chip"><span className="live-dot" />{fixture?.real ? `receipts recorded from HyperEVM RPC ${a.published[0]?.verifierRpc?.split("fetched ")[1] ?? ""}` : fixture?.onchain ? (sp.live === "1" ? `re-verified live ${ago(a.verifiedAt)}` : `receipts recorded from Elysium testnet RPC ${a.published[0]?.verifierRpc?.split("fetched ")[1] ?? ""}`) : `verified against replica B (simulated) ${ago(a.verifiedAt)}`}</span>
             {fixture?.onchain && <Link className="chip chip-link" href={q({ live: sp.live === "1" ? "0" : "1" })} replace>{sp.live === "1" ? "Use recorded receipts" : "Re-verify live"}</Link>}
             <span className="chip">block {a.headBlock.toLocaleString("en-US")}</span>
           </div>
@@ -90,6 +92,13 @@ export default async function TokenPage({ params, searchParams }: Props) {
         <div className="mt-6 flex gap-3 rounded-2xl border p-4 text-[14px]" style={{ borderColor: "var(--nogo)", background: "color-mix(in oklab, var(--nogo) 9%, transparent)" }}>
           <span style={{ color: "var(--nogo)" }}><Icon name="alert" /></span>
           <p className="leading-relaxed"><b className="font-medium">Verifier removed.</b> With no second-source re-fetch, every finding is withheld and no verdict can be asserted. That is the evidence-first guarantee: <Link className="underline underline-offset-4" href={q({ verifier: "on" })}>turn the verifier back on</Link> to publish.</p>
+        </div>
+      )}
+
+      {fixture?.real && (
+        <div className="mt-6 flex gap-3 rounded-2xl border border-line p-4 text-[14px]" style={{ background: "color-mix(in oklab, var(--wait) 8%, transparent)" }}>
+          <span style={{ color: "var(--wait)" }}><Icon name="alert" /></span>
+          <p className="leading-relaxed text-muted"><b className="font-medium text-fg">Partial analysis of a real token.</b> Holder-integrity signals only: concentration over all {fixture.report?.holders?.toLocaleString("en-US")} holders, funding links and wallet age for the top {fixture.report?.topK?.toLocaleString("en-US")} by balance. Contracts holding supply (pools, vaults) are excluded as infrastructure. Volume and market-cap rules are not computed yet because each DEX needs its own swap adapter, so they show as unverified and the verdict cannot reach GO. Patterns are described, never intent. <Link className="underline underline-offset-4" href="/real">How this was checked</Link>.</p>
         </div>
       )}
 
@@ -201,7 +210,7 @@ export default async function TokenPage({ params, searchParams }: Props) {
       </section>
 
       {/* ------------------------------------------------ ground truth */}
-      {fixture && (
+      {fixture && !fixture.real && (
         <section className="mt-16">
           <SectionHead eyebrow="Back-test" title="Planted versus found.">The pattern in this mock launch was planted by us, so the answer is known. Ascertain never sees it.</SectionHead>
           <div className="card grid gap-6 p-6 sm:grid-cols-2 lg:grid-cols-4">

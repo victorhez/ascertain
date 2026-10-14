@@ -23,7 +23,7 @@ export function TokenCard({ t, delay = 0 }: { t: Row; delay?: number }) {
         <Cell label="Est. score" value={String(t.score)} />
       </div>
       <div className="mt-4 flex items-center justify-between text-[11.5px] text-dim">
-        <span>{t.onchain ? "On-chain · " : ""}{SCENARIO_LABEL[t.scenario ?? ""] ?? "Live token"}</span>
+        <span>{t.real ? "Real token · HyperEVM · " : t.onchain ? "On-chain · " : ""}{SCENARIO_LABEL[t.scenario ?? ""] ?? "Live token"}</span>
         <span className="mono">{t.withheld ? `${t.withheld} withheld` : "all verified"}</span>
       </div>
     </Link>

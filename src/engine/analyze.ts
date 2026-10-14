@@ -50,27 +50,25 @@ function make(ds: Dataset, signal: SignalId, out: S.SignalOutput): Finding {
   };
 }
 
+const emptyOut = (title: string): S.SignalOutput => ({ title, summary: "not computed", value: {}, evidence: [] });
+
 /** Compute every signal for a dataset (no verification yet). */
 export function computeFindings(ds: Dataset, cfg: EngineConfig = defaultConfig) {
   const L = buildLedger(ds);
+  const partial = !!ds.partial;
   const conc = S.concentration(L);
   const clu = S.fundingClusters(L, cfg);
-  const bun = S.sameBlockEntry(L, cfg);
-  const wash = S.washLoops(L, cfg);
+  const bun = partial ? { ...emptyOut("Same-block entry"), bundles: [] as S.Bundle[] } : S.sameBlockEntry(L, cfg);
+  const wash = partial ? { ...emptyOut("Wash loops"), washWallets: new Set<string>(), loops: [] as S.Loop[] } : S.washLoops(L, cfg);
   const age = S.walletAge(L, cfg);
   const eff = S.effectiveHolders(L, { clusters: clu.clusters, bundles: bun.bundles, washWallets: wash.washWallets }, [...clu.evidence.slice(0, 8), ...bun.evidence.slice(0, 6), ...wash.evidence.slice(0, 8)], cfg);
-  const vol = S.volumePerWallet(L, { clusters: clu.clusters, bundles: bun.bundles, washWallets: wash.washWallets, dsu: eff.dsu }, cfg);
-  const mc = S.marketCap(L);
-
   const findings = [
     make(ds, "concentration", conc),
     make(ds, "funding_clusters", clu),
-    make(ds, "same_block_entry", bun),
-    make(ds, "wash_loops", wash),
+    ...(partial ? [] : [make(ds, "same_block_entry", bun), make(ds, "wash_loops", wash)]),
     make(ds, "wallet_age", age),
     make(ds, "effective_holders", eff),
-    make(ds, "volume_per_wallet", vol),
-    make(ds, "market_cap", mc),
+    ...(partial ? [] : [make(ds, "volume_per_wallet", S.volumePerWallet(L, { clusters: clu.clusters, bundles: bun.bundles, washWallets: wash.washWallets, dsu: eff.dsu }, cfg)), make(ds, "market_cap", S.marketCap(L))]),
   ];
   return { L, findings, clu, bun, wash, eff };
 }
