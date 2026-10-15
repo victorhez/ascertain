@@ -14,3 +14,9 @@ evidence/replay-*.json
 
 .vercel
 data/real/*.transfers.json
+video/frames
+video/stills
+video/check*.jpg
+video/audio.wav
+video/r*.log
+video/node_modules

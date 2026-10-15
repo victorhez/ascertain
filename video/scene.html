@@ -1,0 +1,353 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Ascertain demo</title>
+<style>
+@font-face { font-family: G; font-weight: 400; src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Regular.woff2"); }
+@font-face { font-family: G; font-weight: 500; src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Medium.woff2"); }
+@font-face { font-family: G; font-weight: 600; src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-SemiBold.woff2"); }
+@font-face { font-family: GM; font-weight: 400; src: url("../node_modules/geist/dist/fonts/geist-mono/GeistMono-Regular.woff2"); }
+@font-face { font-family: GM; font-weight: 500; src: url("../node_modules/geist/dist/fonts/geist-mono/GeistMono-Medium.woff2"); }
+:root { --bg: #07080a; --fg: #f3f5f6; --muted: #959ba4; --dim: #5f656e; --accent: #8dffe0; --go: #43e0a0; --wait: #ffbf55; --nogo: #ff6070; --line: rgba(255,255,255,.09); }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); font-family: G, sans-serif; color: var(--fg); -webkit-font-smoothing: antialiased; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+.abs { position: absolute; }
+.layer { position: absolute; inset: 0; opacity: 0; will-change: opacity, transform; }
+.mono { font-family: GM, monospace; }
+#bg { position: absolute; inset: 0; opacity: 1; }
+#glow { position: absolute; width: 1400px; height: 900px; border-radius: 50%; background: radial-gradient(closest-side, rgba(141,255,224,.12), transparent); filter: blur(30px); }
+#grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 80%); }
+.eyebrow { font-family: GM, monospace; font-size: 20px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.h1 { font-size: 72px; line-height: 1.02; letter-spacing: -0.04em; font-weight: 600; }
+.sub { font-size: 29px; line-height: 1.4; color: var(--muted); }
+.chipv { display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); font-size: 22px; color: var(--fg); margin: 0 12px 12px 0; }
+.chipv .d { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+/* screen frame */
+.frame { position: absolute; left: 700px; top: 150px; width: 1180px; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); background: #0b0d10; box-shadow: 0 60px 140px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(141,255,224,.05), 0 0 120px -30px rgba(141,255,224,.18); }
+.chrome { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #101317; border-bottom: 1px solid var(--line); }
+.chrome i { width: 12px; height: 12px; border-radius: 50%; background: #2a2f36; display: block; }
+.chrome .url { margin-left: 14px; flex: 1; height: 26px; border-radius: 8px; background: #0a0c0f; font-family: GM, monospace; font-size: 14px; color: var(--muted); display: flex; align-items: center; padding: 0 12px; }
+.vp { position: relative; width: 1180px; height: 737.5px; overflow: hidden; background: #07080a; }
+.zoom { position: absolute; inset: 0; transform-origin: 50% 50%; }
+.zoom img { width: 100%; height: 100%; display: block; }
+.hl { position: absolute; border: 3px solid var(--accent); border-radius: 14px; box-shadow: 0 0 0 6px rgba(141,255,224,.12), 0 0 60px rgba(141,255,224,.35); opacity: 0; }
+.hl.red { border-color: var(--nogo); box-shadow: 0 0 0 6px rgba(255,96,112,.12), 0 0 60px rgba(255,96,112,.4); }
+.hl .tag { position: absolute; left: 0; top: -44px; background: var(--accent); color: #04120d; font-weight: 600; font-size: 20px; padding: 6px 14px; border-radius: 10px; white-space: nowrap; }
+.hl.red .tag { background: var(--nogo); color: #1a0508; }
+/* terminal */
+.term { background: #0a0c0f; padding: 34px 38px; font-family: GM, monospace; font-size: 23px; line-height: 1.6; height: 777.5px; color: #cfd5db; white-space: pre-wrap; word-break: break-all; }
+.term .p { color: var(--accent); }
+.term .g { color: var(--go); }
+.term .r { color: var(--nogo); }
+.term .y { color: var(--wait); }
+.term .m { color: var(--dim); }
+.cursor { display: inline-block; width: 12px; height: 26px; background: var(--accent); vertical-align: -4px; margin-left: 2px; }
+/* left column */
+#left { position: absolute; left: 90px; top: 220px; width: 560px; }
+#left .h1 { font-size: 66px; margin-top: 22px; }
+#left .sub { margin-top: 26px; font-size: 27px; }
+#chips { margin-top: 36px; }
+#prog { position: absolute; left: 0; bottom: 0; height: 5px; background: linear-gradient(90deg, var(--accent), #fff); width: 0; box-shadow: 0 0 20px rgba(141,255,224,.7); }
+#brandcorner { position: absolute; right: 60px; top: 44px; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 26px; letter-spacing: -.02em; opacity: .9; }
+#sceneNo { position: absolute; left: 90px; top: 60px; }
+/* search mock */
+.searchwrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 34px; background: radial-gradient(900px 500px at 50% 30%, rgba(141,255,224,.08), transparent), #07080a; }
+.searchbox { width: 860px; height: 96px; border-radius: 22px; background: #0f1215; border: 1px solid rgba(255,255,255,.14); display: flex; align-items: center; padding: 0 20px 0 34px; gap: 18px; box-shadow: 0 40px 100px -30px #000; }
+.searchbox .ty { flex: 1; font-family: GM, monospace; font-size: 36px; color: #fff; letter-spacing: .02em; }
+.searchbox .btn { height: 64px; padding: 0 30px; border-radius: 16px; background: #fff; color: #07080a; font-weight: 600; font-size: 24px; display: flex; align-items: center; }
+.pills { display: flex; gap: 14px; }
+.pills span { padding: 8px 18px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-size: 20px; font-family: GM, monospace; }
+/* big text scenes */
+.center { position: absolute; left: 0; right: 0; text-align: center; }
+.big { font-size: 96px; letter-spacing: -.045em; font-weight: 600; line-height: 1.02; }
+#cap { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font-size: 30px; color: var(--muted); }
+.verd { font-size: 120px; font-weight: 600; letter-spacing: -.04em; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"><div id="glow"></div><div id="grid"></div></div>
+
+  <!-- S0: logo -->
+  <div id="s0" class="layer">
+    <svg id="mark" class="abs" viewBox="535 568 830 730" style="left:810px;top:270px;width:300px;height:264px;overflow:visible">
+      <path id="markp" d="M535 848C760 848 880 730 947 568C1014 730 1140 848 1365 848L1365 1026C1140 1026 975 880 947 680C919 880 760 1026 535 1026Z M535 1120C760 1120 880 1002 947 840C1014 1002 1140 1120 1365 1120L1365 1298C1140 1298 975 1152 947 952C919 1152 760 1298 535 1298Z" fill="#fff" fill-opacity="0" stroke="#8dffe0" stroke-width="5" />
+    </svg>
+    <div id="wm" class="center" style="top:590px;font-size:92px;font-weight:500;letter-spacing:-.04em">Ascertain</div>
+    <div id="tag" class="center" style="top:730px;font-size:44px;color:#959ba4">Know who is really holding.</div>
+  </div>
+
+  <!-- S1: problem -->
+  <div id="s1" class="layer">
+    <svg id="dots" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div id="s1a" class="center eyebrow" style="top:96px">Simulated launch · what the chain shows</div>
+    <div id="s1t1" class="center big" style="top:170px">Ascended status rewards<br>holders and volume.</div>
+    <div id="s1t2" class="center big" style="top:170px;color:#ff6070">Both are easy to fake.</div>
+    <div id="counter" class="center mono" style="top:800px;font-size:150px;font-weight:500;letter-spacing:-.03em"></div>
+    <div id="counterlbl" class="center" style="top:970px;font-size:34px;color:#959ba4"></div>
+  </div>
+
+  <!-- screen scenes -->
+  <div id="scr" class="layer">
+    <div id="frameSearch" class="frame" style="opacity:0">
+      <div class="chrome"><i></i><i></i><i></i><div class="url">ascertain.vercel.app</div></div>
+      <div class="vp"><div class="searchwrap">
+        <div class="eyebrow">Paste a token address or symbol</div>
+        <div class="searchbox"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#959ba4" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><div class="ty" id="typed"></div><div class="btn">Check →</div></div>
+        <div class="pills"><span>LUMT · on-chain · clean</span><span>MIRT · on-chain · clustered</span><span>WAVT · on-chain · wash</span></div>
+      </div></div>
+    </div>
+    <div id="frameShot" class="frame" style="opacity:0">
+      <div class="chrome"><i></i><i></i><i></i><div class="url" id="shoturl"></div></div>
+      <div class="vp"><div class="zoom" id="zoom"><img id="shotimg" /><div id="hls"></div></div></div>
+    </div>
+    <div id="frameTerm" class="frame" style="opacity:0">
+      <div class="chrome"><i></i><i></i><i></i><div class="url" id="termtitle">terminal</div></div>
+      <div class="term" id="term"></div>
+    </div>
+
+    <div id="left">
+      <div class="eyebrow" id="eb"></div>
+      <div class="h1" id="h1"></div>
+      <div class="sub" id="sb"></div>
+      <div id="chips"></div>
+    </div>
+  </div>
+
+  <!-- S8: end -->
+  <div id="s8" class="layer">
+    <svg class="abs" viewBox="535 568 830 730" style="left:880px;top:130px;width:160px;height:141px"><path d="M535 848C760 848 880 730 947 568C1014 730 1140 848 1365 848L1365 1026C1140 1026 975 880 947 680C919 880 760 1026 535 1026Z M535 1120C760 1120 880 1002 947 840C1014 1002 1140 1120 1365 1120L1365 1298C1140 1298 975 1152 947 952C919 1152 760 1298 535 1298Z" fill="#fff"/></svg>
+    <div class="center big" style="top:310px;font-size:104px">Check before you trust.</div>
+    <div id="road" class="center" style="top:500px"></div>
+    <div class="center mono" id="url1" style="top:700px;font-size:52px;color:#8dffe0;font-weight:500">ascertain.vercel.app</div>
+    <div class="center mono" id="url2" style="top:780px;font-size:32px;color:#959ba4">github.com/victorhez/ascertain</div>
+    <div class="center" id="team" style="top:870px;font-size:26px;color:#959ba4;opacity:0">Built by James · Victorhez · Oloba</div>
+    <div class="center" id="fine" style="top:930px;font-size:22px;color:#5f656e;padding:0 200px;line-height:1.5">Scores are estimates from public Ascend criteria, not official Ascend decisions and not financial advice. Findings describe observable on-chain patterns only. Not affiliated with Kinetiq or Ascend.</div>
+  </div>
+
+  <div id="brandcorner" style="opacity:0"><svg viewBox="535 568 830 730" width="34" height="30"><path d="M535 848C760 848 880 730 947 568C1014 730 1140 848 1365 848L1365 1026C1140 1026 975 880 947 680C919 880 760 1026 535 1026Z M535 1120C760 1120 880 1002 947 840C1014 1002 1140 1120 1365 1120L1365 1298C1140 1298 975 1152 947 952C919 1152 760 1298 535 1298Z" fill="#fff"/></svg>Ascertain</div>
+  <div id="prog"></div>
+</div>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const trap = (t, a, b, c, d) => Math.min(eo(seg(t, a, b)), 1 - eo(seg(t, c, d)));
+const $ = (id) => document.getElementById(id);
+const DUR = 106;
+
+/* ---------- S1 dots ---------- */
+function lcg(seed) { let s = seed >>> 0; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+const R = lcg(41);
+const sizes = [200, 110, 48, 20];
+const hubs = [[430, 640], [960, 600], [1480, 650], [1760, 520]];
+const dots = [];
+const svg = $("dots");
+const NS = "http://www.w3.org/2000/svg";
+const organic = 412 - sizes.reduce((a, b) => a + b, 0);
+for (let i = 0; i < organic; i++) dots.push({ sx: 80 + R() * 1760, sy: 420 + R() * 560, mx: 0, my: 0, hub: -1, o: R() });
+sizes.forEach((n, h) => { for (let i = 0; i < n; i++) { const sx = 80 + R() * 1760, sy = 420 + R() * 560, a = R() * 6.283, r = Math.sqrt(R()) * (10 + Math.sqrt(n) * 3.2); dots.push({ sx, sy, mx: hubs[h][0] + Math.cos(a) * r, my: hubs[h][1] + Math.sin(a) * r, hub: h, o: R() }); } });
+for (let i = dots.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [dots[i], dots[j]] = [dots[j], dots[i]]; }
+dots.forEach((d, i) => { d.mx = d.hub < 0 ? d.sx : d.mx; d.my = d.hub < 0 ? d.sy : d.my; d.el = document.createElementNS(NS, "circle"); d.el.setAttribute("r", d.hub < 0 ? 5 : 3.6); svg.appendChild(d.el); d.rank = i / dots.length; });
+const rings = hubs.map((h, i) => { const c = document.createElementNS(NS, "circle"); c.setAttribute("cx", h[0]); c.setAttribute("cy", h[1]); c.setAttribute("r", 22 + Math.sqrt(sizes[i]) * 4.6); c.setAttribute("fill", "none"); c.setAttribute("stroke", "#ff6070"); c.setAttribute("stroke-dasharray", "5 7"); c.setAttribute("stroke-opacity", "0"); svg.appendChild(c); const tx = document.createElementNS(NS, "text"); tx.setAttribute("x", h[0]); tx.setAttribute("y", h[1] - 36 - Math.sqrt(sizes[i]) * 4.4); tx.setAttribute("text-anchor", "middle"); tx.setAttribute("fill", "#ff6070"); tx.setAttribute("font-size", "26"); tx.setAttribute("font-family", "GM"); tx.textContent = sizes[i] + " wallets · 1 operator"; tx.setAttribute("opacity", "0"); svg.appendChild(tx); return { c, tx }; });
+
+function scene1(t) {
+  const L = t - 7;                       // 0..13
+  const appear = eo(seg(L, 1.6, 4.4));   // dots flood in
+  const merge = eio(seg(L, 7.4, 10.8));
+  $("s1t1").style.opacity = trap(L, .2, 1.0, 3.8, 4.6);
+  $("s1t1").style.transform = `translateY(${(1 - eo(seg(L, .2, 1))) * 24}px)`;
+  $("s1t2").style.opacity = trap(L, 4.2, 5.0, 7.6, 8.4) ;
+  $("s1t2").style.transform = `translateY(${(1 - eo(seg(L, 4.2, 5))) * 24}px)`;
+  dots.forEach((d) => {
+    const vis = clamp((appear * 1.25 - d.rank * .25) * 4);
+    const m = d.hub < 0 ? 0 : merge;
+    const x = d.sx + (d.mx - d.sx) * m, y = d.sy + (d.my - d.sy) * m;
+    d.el.setAttribute("cx", x.toFixed(1)); d.el.setAttribute("cy", y.toFixed(1));
+    d.el.setAttribute("opacity", (vis * (d.hub < 0 ? 1 : .9)).toFixed(2));
+    const red = d.hub >= 0 ? merge : 0;
+    const acc = d.hub < 0 ? merge : 0;
+    d.el.setAttribute("fill", d.hub < 0 ? `rgb(${Math.round(149 + (141 - 149) * acc)},${Math.round(155 + (255 - 155) * acc)},${Math.round(164 + (224 - 164) * acc)})` : `rgb(${Math.round(149 + (255 - 149) * red)},${Math.round(155 + (96 - 155) * red)},${Math.round(164 + (112 - 164) * red)})`);
+  });
+  rings.forEach((r, i) => { const o = clamp((merge - .55) * 2.2); r.c.setAttribute("stroke-opacity", (o * .7).toFixed(2)); r.tx.setAttribute("opacity", o.toFixed(2)); });
+  const n = merge < .02 ? Math.round(412 * appear) : Math.round(412 + (38 - 412) * merge);
+  $("counter").textContent = n;
+  $("counter").style.color = merge > .5 ? "#8dffe0" : "#f3f5f6";
+  $("counterlbl").textContent = merge < .02 ? (appear > .1 ? "holders on the chain" : "") : (merge > .85 ? "effective holders · one operator behind most of them" : "after merging linked wallets");
+  $("s1a").style.opacity = trap(L, .3, 1, 11.5, 12.6);
+  $("s1").style.opacity = trap(t, 7, 7.8, 19.2, 20);
+}
+
+/* ---------- screens ---------- */
+const SH = {
+  top: { img: "assets/mirt-top.png", url: "ascertain.vercel.app/token/MIRT" },
+  ev: { img: "assets/mirt-evidence.png", url: "ascertain.vercel.app/token/MIRT#evidence" },
+  off: { img: "assets/mirt-off.png", url: "ascertain.vercel.app/token/MIRT?verifier=off" },
+  wh: { img: "assets/withheld.png", url: "ascertain.vercel.app/withheld" },
+  real: { img: "assets/real.png", url: "ascertain.vercel.app/real" },
+};
+function setHL(list, t) {
+  const box = $("hls"); box.innerHTML = "";
+  list.forEach((h) => { const e = document.createElement("div"); e.className = "hl " + (h.red ? "red" : ""); e.style.cssText = `left:${h.x}%;top:${h.y}%;width:${h.w}%;height:${h.h}%;opacity:${trap(t, h.a, h.a + .5, h.b, h.b + .5)}`; if (h.tag) e.innerHTML = `<div class="tag">${h.tag}</div>`; box.appendChild(e); });
+}
+function leftText(eb, h1, sb, chips, t, a, b) {
+  const o = trap(t, a, a + .6, b - .5, b);
+  $("left").style.opacity = o; $("left").style.transform = `translateX(${(1 - eo(seg(t, a, a + .7))) * -30}px)`;
+  if ($("eb").dataset.k !== eb + h1) { $("eb").dataset.k = eb + h1; $("eb").textContent = eb; $("h1").innerHTML = h1; $("sb").innerHTML = sb; $("chips").innerHTML = chips.map((c) => `<span class="chipv"><span class="d"></span>${c}</span>`).join(""); }
+}
+function typedText(s, t0, cps, t) { return s.slice(0, Math.floor(clamp((t - t0) * cps, 0, s.length))); }
+
+function frameIn(el, t, a, b, c, d) {
+  const o = trap(t, a, b, c, d);
+  el.style.opacity = o;
+  el.style.transform = `translateX(${(1 - eo(seg(t, a, b))) * 70 + eo(seg(t, c, d)) * -30}px) scale(${.97 + .03 * eo(seg(t, a, b))})`;
+}
+function kb(t, a, b, s0, s1, ox, oy) {   // ken burns on zoom wrapper
+  const p = eio(seg(t, a, b));
+  const s = s0 + (s1 - s0) * p;
+  $("zoom").style.transformOrigin = `${ox}% ${oy}%`;
+  $("zoom").style.transform = `scale(${s})`;
+}
+function setShot(k) { if ($("shotimg").dataset.k !== k) { $("shotimg").dataset.k = k; $("shotimg").src = SH[k].img; $("shoturl").textContent = SH[k].url; } }
+
+function termFrame(lines, t) {
+  // lines: [{t0, text, cps, cls}] typed sequentially
+  let html = "";
+  for (const l of lines) {
+    if (t < l.t0) break;
+    const s = l.cps ? l.text.slice(0, Math.floor((t - l.t0) * l.cps)) : l.text;
+    html += (l.cls ? `<span class="${l.cls}">${esc(s)}</span>` : esc(s)) + (l.nl === false ? "" : "\n");
+    if (l.cps && s.length < l.text.length) { html += '<span class="cursor"></span>'; break; }
+  }
+  $("term").innerHTML = html;
+}
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function scenes(t) {
+  const sc = $("scr");
+  sc.style.opacity = t >= 19.4 && t <= 95.6 ? 1 : 0;
+  if (t < 19.4 || t > 95.6) return;
+
+  // ---- S2 paste a token 20-34
+  if (t < 34.4) {
+    leftText("01 · Paste a token", "One address.<br>One verdict.", "Go, Wait or No-go, with the exact rule that decided it.", ["Real contracts on Elysium testnet", "56 raw holders → 9 effective"], t, 20.2, 34);
+    frameIn($("frameSearch"), t, 20.2, 21.2, 23.4, 24.0);
+    $("typed").innerHTML = typedText("MIRT", 21.4, 5, t) + (t < 23.2 ? '<span class="cursor"></span>' : "");
+    frameIn($("frameShot"), t, 23.3, 24.1, 34.0, 34.5);
+    setShot("top");
+    kb(t, 23.3, 34, 1.0, 1.12, 30, 55);
+    setHL([
+      { x: 25, y: 56, w: 14, h: 8, red: true, tag: "NO-GO", a: 26.2, b: 33 },
+      { x: 59.5, y: 52.8, w: 28.5, h: 14, tag: "56 holders → 9 effective", a: 29, b: 33.6 },
+    ], t);
+  }
+  // ---- S3 receipts 34-50
+  else if (t < 50.2) {
+    leftText("02 · Check the proof", "Every claim<br>has a receipt.", "Anyone can re-fetch the fact from chain state, byte for byte.", ["15 cited facts, all identical", "Copy-paste cast commands"], t, 34.4, 50);
+    frameIn($("frameShot"), t, 34.2, 35, 40.2, 40.8);
+    setShot("ev"); kb(t, 34.4, 40.8, 1.0, 1.1, 50, 70);
+    setHL([{ x: 12, y: 63.4, w: 76, h: 6.8, tag: "tx 0xe4d54889…9d8dc8d2 · identical", a: 36.5, b: 40.2 }], t);
+    frameIn($("frameTerm"), t, 40.4, 41.2, 50, 50.4);
+    $("termtitle").textContent = "zsh";
+    termFrame([
+      { t0: 41, text: "$ cast tx 0xe4d54889a150b58fa66ba59b2554511dd93256ba2c0b0a792ab187299d8dc8d2 \\", cps: 55, cls: "p" },
+      { t0: 43.3, text: "    --json --rpc-url https://testnet-rpc.elysium.kinetiq.xyz", cps: 55, cls: "p" },
+      { t0: 44.9, text: '{', cls: "" },
+      { t0: 45.1, text: '  "blockNumber": "6808371",' },
+      { t0: 45.4, text: '  "from": "0x75946465d2cc79b9ba4b4de4bcf0133c796f7cee",' },
+      { t0: 45.7, text: '  "to":   "0x0973f8c58f22851b0301fb5987738d9d1372cf05",' },
+      { t0: 46.0, text: '  "value": "0x3691d6afc000"' },
+      { t0: 46.2, text: '}' },
+      { t0: 47.2, text: "✓ identical to the receipt Ascertain published", cls: "g" },
+    ], t);
+  }
+  // ---- S4 verifier off 50-62
+  else if (t < 62.2) {
+    leftText("03 · Remove the verifier", "Delete it.<br>Nothing<br>is published.", "Evidence first: no second-source re-fetch, no findings, no verdict.", ["Every finding withheld", "Verdict cannot be asserted"], t, 50.4, 62);
+    frameIn($("frameShot"), t, 50.2, 51, 62, 62.5);
+    // crossfade top -> off
+    if (t < 53.4) { setShot("top"); kb(t, 50.4, 53.4, 1.0, 1.04, 30, 20); setHL([{ x: 14, y: 32.5, w: 8.5, h: 4.4, tag: "Verifier: On", a: 51.2, b: 53.2 }], t); }
+    else { setShot("off"); kb(t, 53.4, 62, 1.0, 1.1, 50, 38); setHL([{ x: 10.7, y: 39.8, w: 78.7, h: 8.8, red: true, tag: "Verifier removed", a: 54.4, b: 61.5 }, { x: 25, y: 66, w: 18, h: 8, red: true, tag: "WAIT · score 0", a: 57.5, b: 61.5 }], t); }
+  }
+  // ---- S5 withheld 62-71
+  else if (t < 71.2) {
+    leftText("04 · In public", "Failures are<br>withheld, with<br>the reason.", "Nothing is dropped quietly. Injected drift is labelled as injected.", ["Mismatch shown byte for byte", "Public withheld list"], t, 62.4, 71);
+    frameIn($("frameShot"), t, 62.2, 63, 70.6, 71.2);
+    setShot("wh"); kb(t, 62.4, 71, 1.0, 1.08, 50, 40);
+    setHL([{ x: 12, y: 36, w: 76, h: 16.5, tag: "2 of 11 cited facts did not re-fetch identically", a: 64, b: 70 }], t);
+  }
+  // ---- S6 agents 71-85
+  else if (t < 85.2) {
+    leftText("05 · For agents", "An agent pays<br>a cent before<br>it acts.", "MCP, REST and x402 pay-per-answer. Verdicts for machines.", ["Demo settlement: no funds move", "$0.01 per verdict"], t, 71.4, 85);
+    frameIn($("frameTerm"), t, 71.2, 72, 85, 85.5);
+    $("termtitle").textContent = "agent · x402";
+    termFrame([
+      { t0: 72, text: "$ curl -i ascertain.vercel.app/v1/token/MIRT/readiness?tier=paid", cps: 60, cls: "p" },
+      { t0: 73.6, text: "HTTP/2 402  Payment Required", cls: "y" },
+      { t0: 73.9, text: '{"x402Version":1,"accepts":[{"scheme":"exact","network":"base-sepolia",', cls: "m" },
+      { t0: 74.0, text: ' "maxAmountRequired":"10000","asset":"USDC"}]}', cls: "m" },
+      { t0: 75.2, text: "→ signing EIP-3009 authorization · 0.01 USDC", cls: "y" },
+      { t0: 76.4, text: "$ curl -i … -H 'X-PAYMENT: eyJ4NDAyVmVyc2lvbiI6MSwic2NoZW1l…'", cps: 60, cls: "p" },
+      { t0: 78.2, text: "HTTP/2 200  OK", cls: "g" },
+      { t0: 78.5, text: '{ "verdict": "NO-GO", "score": 42, "findings": 8 }', cls: "r" },
+      { t0: 79.0, text: "X-PAYMENT-RESPONSE: {success: true, mode: demo}", cls: "m" },
+      { t0: 80.6, text: "replay of the same authorization → 402 rejected", cls: "y" },
+    ], t);
+  }
+  // ---- S7 real tokens 85-95
+  else {
+    leftText("06 · Real tokens", "Replayed on<br>real HyperEVM<br>tokens.", "Holder integrity on production data. Flags are listed for hand-check, never as accusations.", ["HWAVE · HPL replayed", "8 clusters awaiting hand-check", "Partial analysis, labelled"], t, 85.4, 95.2);
+    frameIn($("frameShot"), t, 85.2, 86, 95, 95.6);
+    setShot("real"); kb(t, 85.4, 95.2, 1.0, 1.1, 50, 50);
+    setHL([{ x: 17, y: 37.5, w: 66, h: 11, tag: "8 clusters flagged · hand-check pending", a: 86.6, b: 94 }, { x: 17, y: 59, w: 66, h: 21, tag: "HPL · HWAVE on HyperEVM mainnet", a: 89.5, b: 94.8 }], t);
+  }
+}
+
+function sceneEnd(t) {
+  $("s8").style.opacity = trap(t, 95.2, 96.2, 105.4, 106);
+  const p = eo(seg(t, 95.4, 97));
+  $("s8").style.transform = `scale(${.985 + .015 * p})`;
+  $("road").innerHTML = ["Ascend hook-pool adapter", "Mainnet launch through Ascend", "Alerts", "HyperCore-native checks"].map((x, i) => `<span class="chipv" style="font-size:26px;height:56px;opacity:${eo(seg(t, 97.2 + i * .35, 97.8 + i * .35))}"><span class="d"></span>${x}</span>`).join("");
+  $("url1").style.opacity = eo(seg(t, 99.4, 100.2)); $("url2").style.opacity = eo(seg(t, 99.9, 100.7)); $("team").style.opacity = eo(seg(t, 100.6, 101.4)); $("fine").style.opacity = eo(seg(t, 101.2, 102.2));
+}
+
+function sceneLogo(t) {
+  const o = trap(t, 0.2, .8, 6.3, 7);
+  $("s0").style.opacity = o;
+  const draw = eo(seg(t, .3, 2.2));
+  const len = 3400;
+  const p = $("markp");
+  p.style.strokeDasharray = len; p.style.strokeDashoffset = len * (1 - draw);
+  p.setAttribute("fill-opacity", eo(seg(t, 1.8, 3)).toFixed(2));
+  p.setAttribute("stroke-opacity", (1 - eo(seg(t, 2.4, 3.2))).toFixed(2));
+  $("mark").style.transform = `translateY(${(1 - eo(seg(t, .3, 1.4))) * 20}px)`;
+  $("wm").style.opacity = eo(seg(t, 2.6, 3.6)); $("wm").style.transform = `translateY(${(1 - eo(seg(t, 2.6, 3.6))) * 20}px)`;
+  $("tag").style.opacity = eo(seg(t, 4, 5)); $("tag").style.transform = `translateY(${(1 - eo(seg(t, 4, 5))) * 16}px)`;
+}
+
+window.renderAt = function (t) {
+  $("glow").style.left = (700 + Math.sin(t * .15) * 260) + "px"; $("glow").style.top = (-80 + Math.cos(t * .12) * 80) + "px";
+  sceneLogo(t);
+  scene1(t);
+  scenes(t);
+  sceneEnd(t);
+  $("prog").style.width = (t / DUR * 100) + "%";
+  $("brandcorner").style.opacity = t > 20 && t < 95 ? .85 : 0;
+  // hide unused frames outside their windows
+  if (t < 19.4 || t > 95.6) { ["frameSearch", "frameShot", "frameTerm"].forEach((i) => ($(i).style.opacity = 0)); $("left").style.opacity = 0; }
+  else {
+    if (t >= 34.4) $("frameSearch").style.opacity = 0;
+    if (t < 23.3) $("frameShot").style.opacity = 0;
+    if (!((t >= 40.4 && t < 50.4) || (t >= 71.2 && t < 85.5))) $("frameTerm").style.opacity = 0;
+    if (!((t >= 23.3 && t < 40.8) || (t >= 50.2 && t < 71.2) || t >= 85.2)) $("frameShot").style.opacity = 0;
+  }
+  return true;
+};
+renderAt(0);
+</script>
+</body>
+</html>
