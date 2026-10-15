@@ -1,0 +1,5 @@
+data/real/*.transfers.json
+.env.local
+node_modules
+.next
+mcp/node_modules
